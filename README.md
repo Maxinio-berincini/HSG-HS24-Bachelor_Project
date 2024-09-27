@@ -8,3 +8,7 @@
 
 [Excel Test Workbook](https://universitaetstgallen-my.sharepoint.com/:x:/g/personal/max_beringer_student_unisg_ch/EWATbIVhY_hEq_wKv-lx8YcB2wLVMEke4HgILwN57KLkpQ)
 
+## Collaborative PowerPoint
+
+[Interim Presentation](https://universitaetstgallen-my.sharepoint.com/:p:/r/personal/max_beringer_student_unisg_ch/Documents/Bachelor%20Project%20Intermediate%20Presentation.pptx?d=w98b06545af7f49df8a84e3db3f0b2479&csf=1&web=1&e=gQvzW2)
+
