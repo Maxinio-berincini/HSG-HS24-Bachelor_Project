@@ -1,5 +1,6 @@
 package org.example.formulaeditor.crdt;
 
+import org.example.formulaeditor.model.Formula;
 import org.example.formulaeditor.model.Workbook;
 
 public class CRDTMerge {
@@ -11,6 +12,11 @@ public class CRDTMerge {
 
     //TODO merge logic
     public Workbook merge(Workbook local, Workbook remote) {
+        return rules.applyRules(local, remote);
+    }
+
+    /// Merge two Formulas separately
+    public Formula merge(Formula local, Formula remote) {
         return rules.applyRules(local, remote);
     }
 }

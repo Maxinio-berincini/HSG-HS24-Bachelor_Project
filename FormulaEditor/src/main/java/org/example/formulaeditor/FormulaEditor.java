@@ -14,11 +14,15 @@ public class FormulaEditor {
         this.workbook = new Workbook();
     }
 
-    public String addFormula(String input) throws Exception {
+    public String addFormula(String id, String input) throws Exception {
         ASTNode ast = parser.parse(input);
-        Formula formula = new Formula(ast);
+        Formula formula = new Formula(id, ast);
         workbook.addFormula(formula);
         return formula.toString();
+    }
+
+    public Workbook getWorkbook() {
+        return workbook;
     }
 
     //TODO add more UI methods
