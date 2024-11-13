@@ -1,6 +1,5 @@
 package org.example.formulaeditor.parser;
 
-import org.example.formulaeditor.parser.Parser;
 import org.example.formulaeditor.parser.ast.ASTNode;
 import org.junit.Assert;
 import org.junit.Test;

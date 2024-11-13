@@ -3,17 +3,17 @@ package org.example.formulaeditor.parser.ast;
 import org.example.formulaeditor.parser.ASTNodeVisitor;
 
 public class ExcelString implements ASTNode {
-  public final String value;
+    public final String value;
 
-  public ExcelString(String value) {
-    this.value = value;
-  }
+    public ExcelString(String value) {
+        this.value = value;
+    }
 
-  public <T> T accept(ASTNodeVisitor<T> visitor) {
-    return visitor.visitString(this);
-  }
+    public <T> T accept(ASTNodeVisitor<T> visitor) {
+        return visitor.visitString(this);
+    }
 
-  public String toString() {
-    return this.value;
-  }
+    public String toString() {
+        return this.value;
+    }
 }

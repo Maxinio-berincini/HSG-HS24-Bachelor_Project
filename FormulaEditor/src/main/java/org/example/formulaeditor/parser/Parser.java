@@ -1,8 +1,8 @@
 package org.example.formulaeditor.parser;
 
-import org.example.formulaeditor.parser.ast.*;
 import org.example.formulaeditor.parser.ast.Boolean;
 import org.example.formulaeditor.parser.ast.Number;
+import org.example.formulaeditor.parser.ast.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ public class Parser {
     private static String[] tokenize(String input) {
         input.replaceAll("e +", "e+").replaceAll("e -", "e-").replaceAll("e+ ", "e+").replaceAll("e- ", "e-")
                 .replaceAll("> =", ">=").replaceAll("< =", "<=").replaceAll("< >", "<>");
-        for (String s : new String[] { ":", ",", "\\(", "\\)", "\\*", "\\+", "/", "-", "%", "\\^", "=", "<", "<=", ">=", "<>" }) {
+        for (String s : new String[]{":", ",", "\\(", "\\)", "\\*", "\\+", "/", "-", "%", "\\^", "=", "<", "<=", ">=", "<>"}) {
             input = input.replaceAll(s, " " + s + " ");
         }
         return input.trim().split("\\s+");
@@ -69,10 +69,13 @@ public class Parser {
         String col = "";
         String row = "";
 
-        for (char c: token.toCharArray()) {
+        for (char c : token.toCharArray()) {
             if (Character.isAlphabetic(c)) {
-                if (row.length() == 0) { col += c; }
-                else { return Optional.empty(); }
+                if (row.length() == 0) {
+                    col += c;
+                } else {
+                    return Optional.empty();
+                }
             } else if (Character.isDigit(c)) {
                 row += c;
             }
@@ -106,15 +109,22 @@ public class Parser {
         for (BasicFunction fun : BasicFunction.values()) {
             if (fun.toString().equalsIgnoreCase(name)) {
                 assertNotEOF();
-                if (!tokens[cursor].equals("(")) throw new ParseException("Expected ( after function name " + fun.toString());
+                if (!tokens[cursor].equals("("))
+                    throw new ParseException("Expected ( after function name " + fun.toString());
                 cursor++;
                 ArrayList<ASTNode> arguments = new ArrayList<>();
                 while (true) {
                     arguments.add(parseExpr());
                     assertNotEOF();
-                    if (tokens[cursor].equals(")")) { cursor++; break; }
-                    else if (tokens[cursor].equals(",")) { cursor++; continue; }
-                    else { throw new ParseException("Expected closed parenthesis or comma after end of argument, found " + tokens[cursor]); }
+                    if (tokens[cursor].equals(")")) {
+                        cursor++;
+                        break;
+                    } else if (tokens[cursor].equals(",")) {
+                        cursor++;
+                        continue;
+                    } else {
+                        throw new ParseException("Expected closed parenthesis or comma after end of argument, found " + tokens[cursor]);
+                    }
                 }
                 return Optional.of(new FunctionCall(fun, arguments));
             }
@@ -166,7 +176,9 @@ public class Parser {
         while (true) {
             parseBasicExpr().ifPresentOrElse(
                     arithmeticParts::add,
-                    () -> { throw new ParseException("Expected number, boolean, cell, range, or function call"); }
+                    () -> {
+                        throw new ParseException("Expected number, boolean, cell, range, or function call");
+                    }
             );
 
             if (cursor >= tokens.length || tokens[cursor].equals(",") || tokens[cursor].equals(")"))
@@ -177,11 +189,11 @@ public class Parser {
 
         while (arithmeticParts.size() > 1) {
             int min_i = 0;
-            for (int j=0; j<ops.size(); j++) if (ops.get(j).precedence < ops.get(min_i).precedence) min_i = j;
+            for (int j = 0; j < ops.size(); j++) if (ops.get(j).precedence < ops.get(min_i).precedence) min_i = j;
             arithmeticParts.set(min_i,
                     new Binary(arithmeticParts.get(min_i),
                             ops.remove(min_i),
-                            arithmeticParts.remove(min_i+1)));
+                            arithmeticParts.remove(min_i + 1)));
         }
 
         return arithmeticParts.get(0);

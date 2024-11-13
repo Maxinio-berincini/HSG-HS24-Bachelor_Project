@@ -1,9 +1,9 @@
 package org.example.formulaeditor.visitor_example;
 
-import org.example.formulaeditor.parser.*;
-import org.example.formulaeditor.parser.ast.*;
+import org.example.formulaeditor.parser.ASTNodeVisitor;
 import org.example.formulaeditor.parser.ast.Boolean;
 import org.example.formulaeditor.parser.ast.Number;
+import org.example.formulaeditor.parser.ast.*;
 
 public class VisitorExample implements ASTNodeVisitor<VisitorExample.ExcelType> {
 
@@ -40,7 +40,9 @@ public class VisitorExample implements ASTNodeVisitor<VisitorExample.ExcelType> 
     @Override
     public ExcelType visitBinary(Binary n) {
         switch (n.op) {
-            case PLUS: case DIV: case MULT:
+            case PLUS:
+            case DIV:
+            case MULT:
                 ExcelType leftType = n.left.accept(this);
                 ExcelType rightType = n.right.accept(this);
                 if (leftType != ExcelType.NUMBER || rightType != ExcelType.NUMBER) {
@@ -48,7 +50,8 @@ public class VisitorExample implements ASTNodeVisitor<VisitorExample.ExcelType> 
                 } else {
                     return ExcelType.NUMBER;
                 }
-            default: new RuntimeException("Unknown operation");
+            default:
+                new RuntimeException("Unknown operation");
         }
         return null;
     }
@@ -58,7 +61,7 @@ public class VisitorExample implements ASTNodeVisitor<VisitorExample.ExcelType> 
         return null;
     }
 
-    public enum ExcelType { NUMBER, BOOLEAN; }
+    public enum ExcelType {NUMBER, BOOLEAN;}
 
 
 }

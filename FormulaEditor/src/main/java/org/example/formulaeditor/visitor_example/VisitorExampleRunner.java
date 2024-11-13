@@ -1,14 +1,9 @@
 package org.example.formulaeditor.visitor_example;
 
-import org.example.formulaeditor.parser.Parser;
-import org.example.formulaeditor.parser.ast.ASTNode;
-import org.example.formulaeditor.parser.ast.Binary;
-import org.example.formulaeditor.parser.ast.*;
 import org.example.formulaeditor.parser.ast.Number;
+import org.example.formulaeditor.parser.ast.*;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 public class VisitorExampleRunner {
 

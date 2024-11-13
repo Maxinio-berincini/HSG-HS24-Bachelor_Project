@@ -1,10 +1,9 @@
 package org.example.formulaeditor.visitor_example;
 
-import org.example.formulaeditor.parser.*;
-import org.example.formulaeditor.parser.ast.*;
-import org.example.formulaeditor.parser.ast.Number;
-
+import org.example.formulaeditor.parser.ASTNodeVisitor;
 import org.example.formulaeditor.parser.ast.Boolean;
+import org.example.formulaeditor.parser.ast.Number;
+import org.example.formulaeditor.parser.ast.*;
 
 public class TypeCheckingVisitor implements ASTNodeVisitor<VisitorExample.ExcelType> {
 
@@ -47,7 +46,9 @@ public class TypeCheckingVisitor implements ASTNodeVisitor<VisitorExample.ExcelT
     @Override
     public VisitorExample.ExcelType visitBinary(Binary n) {
         switch (n.op) {
-            case PLUS: case DIV: case MULT:
+            case PLUS:
+            case DIV:
+            case MULT:
                 VisitorExample.ExcelType leftType = n.left.accept(new TypeCheckingVisitor(VisitorExample.ExcelType.NUMBER));
                 VisitorExample.ExcelType rightType = n.right.accept(new TypeCheckingVisitor(VisitorExample.ExcelType.NUMBER));
                 if (leftType != VisitorExample.ExcelType.NUMBER || rightType != VisitorExample.ExcelType.NUMBER) {
@@ -55,7 +56,8 @@ public class TypeCheckingVisitor implements ASTNodeVisitor<VisitorExample.ExcelT
                 } else {
                     return VisitorExample.ExcelType.NUMBER;
                 }
-            default: new RuntimeException("Unknown operation");
+            default:
+                new RuntimeException("Unknown operation");
         }
         return null;
     }
