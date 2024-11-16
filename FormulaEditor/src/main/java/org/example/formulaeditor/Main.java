@@ -17,8 +17,9 @@ public class Main {
 
 
         // Add formulas to editor1's workbook
-        editor1.addFormula("A1", "A2 + B2");
-        editor1.addFormula("A2", "5");
+        editor1.addFormula("A1", "5 + 6");
+        editor1.addFormula("A2", "SUM(2,2)");
+        editor1.addFormula("A3", "5");
         /*
         System.out.println("Enter formulas for Editor 1. Type 'done' when finished.");
         addFormulasFromInput(scanner, editor1);
@@ -26,8 +27,10 @@ public class Main {
 
 
         // Add formulas to editor2's workbook
-        editor2.addFormula("A1", "SUM(A2:A10)");
-        editor2.addFormula("B1", "10");
+        //editor2.addFormula("A1", "SUM(A2:A10)");
+        editor2.addFormula("A1", "4 + 8");
+        editor2.addFormula("A2", "SUM(1,4)");
+        editor2.addFormula("A3", "10");
         /*
         System.out.println("Enter formulas for Editor 2. Type 'done' when finished.");
         addFormulasFromInput(scanner, editor2);
