@@ -20,7 +20,7 @@ public class Main {
         //editor1.addFormula("A1", "5 + 6");
         //editor1.addFormula("A2", "SUM(C5:C10)");
         //editor1.addFormula("A3", "5");
-        editor1.addFormula("B5", "SUM(Min(apple,7),Sum(5+8,4))");
+        editor1.addFormula("B5", "SUM(Min(2,7),Product(5+8,4))");
         /*
         System.out.println("Enter formulas for Editor 1. Type 'done' when finished.");
         addFormulasFromInput(scanner, editor1);
@@ -31,7 +31,7 @@ public class Main {
         //editor2.addFormula("A1", "SUM(A2:A10)");
         //editor2.addFormula("A1", "4 + 8");
         //editor2.addFormula("A2", "SUM(A1:B17)");
-        editor2.addFormula("B5", "SUM(Min(8,7),Sum(2-10,7))");
+        editor2.addFormula("B5", "SUM(Max(8,7),Sum(2-10,7))");
         //editor2.addFormula("A3", "10");
         /*
         System.out.println("Enter formulas for Editor 2. Type 'done' when finished.");

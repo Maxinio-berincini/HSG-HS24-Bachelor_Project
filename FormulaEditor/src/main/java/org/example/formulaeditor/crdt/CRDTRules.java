@@ -77,9 +77,6 @@ public class CRDTRules {
         } else if (local instanceof FunctionCall && remote instanceof FunctionCall) {
             return mergeFunctionCall((FunctionCall) local, (FunctionCall) remote);
         } else {
-            //TODO Implement merge logic for other node types
-            //Basic Function, FunctionCall
-
             // If nodes are of the same type but not handled, return local by default
             return local;
         }
@@ -95,6 +92,8 @@ public class CRDTRules {
 
     // Handle merging of FunctionCall nodes
     private FunctionCall mergeFunctionCall(FunctionCall local, FunctionCall remote) {
+        // Merge arguments
+        // traverse the arguments and merge them
         if (local.functionName.equals(remote.functionName)) {
             List<ASTNode> mergedArguments = new ArrayList<>();
             int localSize = local.args.size();
@@ -113,16 +112,37 @@ public class CRDTRules {
                 }
             }
 
-            // Merge arguments
-            // traverse the arguments and merge them
             return new FunctionCall(local.functionName, mergedArguments);
         } else {
             // hierarchy of functions
-            //TODO Basic Function Names merge
-            return local;
+            return mergeBasicFunction(local, remote);
         }
+    }
 
-        //TODO Implement merge logic for FunctionCall nodes
+    private FunctionCall mergeBasicFunction(FunctionCall local, FunctionCall remote) {
+        BasicFunction localFunction = local.functionName;
+        BasicFunction remoteFunction = remote.functionName;
+        // Choose the function with the higher priority
+        if (localFunction.getPriority() > remoteFunction.getPriority()) {
+            return mergeFunctionCall(local, new FunctionCall(localFunction, remote.args));
+        } else if (localFunction.getPriority() < remoteFunction.getPriority()) {
+            return mergeFunctionCall(new FunctionCall(remoteFunction, local.args), remote);
+        } else {
+            // Same priority Exception
+            // Max over Min, Sum over Product, And over Or
+            if(localFunction == BasicFunction.MAX || remoteFunction == BasicFunction.MAX){
+                return mergeFunctionCall(new FunctionCall(BasicFunction.MAX, local.args), new FunctionCall(BasicFunction.MAX, remote.args));
+            } else if(localFunction == BasicFunction.SUM || remoteFunction == BasicFunction.SUM){
+                return mergeFunctionCall(new FunctionCall(BasicFunction.SUM, local.args), new FunctionCall(BasicFunction.SUM, remote.args));
+            } else if(localFunction == BasicFunction.AND || remoteFunction == BasicFunction.AND){
+                return mergeFunctionCall(new FunctionCall(BasicFunction.AND, local.args), new FunctionCall(BasicFunction.AND, remote.args));
+            } else {
+                // Default to local function
+                return mergeFunctionCall(new FunctionCall(localFunction, local.args), new FunctionCall(localFunction, remote.args));
+            }
+
+
+        }
     }
 
     // Rule for merging Numbers: choose the larger Number
