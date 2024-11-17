@@ -6,8 +6,8 @@ import org.example.formulaeditor.parser.Parser;
 import org.example.formulaeditor.parser.ast.ASTNode;
 
 public class FormulaEditor {
-    private Parser parser;
-    private Workbook workbook;
+    private final Parser parser;
+    private final Workbook workbook;
 
     public FormulaEditor() {
         this.parser = new Parser();

@@ -61,7 +61,7 @@ public class VisitorExample implements ASTNodeVisitor<VisitorExample.ExcelType> 
         return null;
     }
 
-    public enum ExcelType {NUMBER, BOOLEAN;}
+    public enum ExcelType {NUMBER, BOOLEAN}
 
 
 }

@@ -110,7 +110,7 @@ public class Parser {
             if (fun.toString().equalsIgnoreCase(name)) {
                 assertNotEOF();
                 if (!tokens[cursor].equals("("))
-                    throw new ParseException("Expected ( after function name " + fun.toString());
+                    throw new ParseException("Expected ( after function name " + fun);
                 cursor++;
                 ArrayList<ASTNode> arguments = new ArrayList<>();
                 while (true) {

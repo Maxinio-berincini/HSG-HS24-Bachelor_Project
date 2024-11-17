@@ -4,7 +4,7 @@ import org.example.formulaeditor.model.Formula;
 import org.example.formulaeditor.model.Workbook;
 
 public class CRDTMerge {
-    private CRDTRules rules;
+    private final CRDTRules rules;
 
     public CRDTMerge(CRDTRules rules) {
         this.rules = rules;

@@ -130,11 +130,11 @@ public class CRDTRules {
         } else {
             // Same priority Exception
             // Max over Min, Sum over Product, And over Or
-            if(localFunction == BasicFunction.MAX || remoteFunction == BasicFunction.MAX){
+            if (localFunction == BasicFunction.MAX || remoteFunction == BasicFunction.MAX) {
                 return mergeFunctionCall(new FunctionCall(BasicFunction.MAX, local.args), new FunctionCall(BasicFunction.MAX, remote.args));
-            } else if(localFunction == BasicFunction.SUM || remoteFunction == BasicFunction.SUM){
+            } else if (localFunction == BasicFunction.SUM || remoteFunction == BasicFunction.SUM) {
                 return mergeFunctionCall(new FunctionCall(BasicFunction.SUM, local.args), new FunctionCall(BasicFunction.SUM, remote.args));
-            } else if(localFunction == BasicFunction.AND || remoteFunction == BasicFunction.AND){
+            } else if (localFunction == BasicFunction.AND || remoteFunction == BasicFunction.AND) {
                 return mergeFunctionCall(new FunctionCall(BasicFunction.AND, local.args), new FunctionCall(BasicFunction.AND, remote.args));
             } else {
                 // Default to local function
@@ -161,20 +161,20 @@ public class CRDTRules {
         } else if (localOp.precedence > remoteOp.precedence) {
             return remoteOp;
         } else {
-            switch (localOp.precedence) {
-                case 2:
+            return switch (localOp.precedence) {
+                case 2 ->
                     // Precedence Level 2: Multiplication vs. Division
-                    return mergeMultiplicationDivision(localOp, remoteOp);
-                case 3:
+                        mergeMultiplicationDivision(localOp, remoteOp);
+                case 3 ->
                     // Precedence Level 3: Plus vs. Minus
-                    return mergeAdditionSubtraction(localOp, remoteOp);
-                case 4:
+                        mergeAdditionSubtraction(localOp, remoteOp);
+                case 4 ->
                     // Precedence Level 4: Comparison Operators
-                    return mergeComparisonOperators(localOp, remoteOp);
-                default:
+                        mergeComparisonOperators(localOp, remoteOp);
+                default ->
                     // Default to local
-                    return localOp;
-            }
+                        localOp;
+            };
         }
     }
 

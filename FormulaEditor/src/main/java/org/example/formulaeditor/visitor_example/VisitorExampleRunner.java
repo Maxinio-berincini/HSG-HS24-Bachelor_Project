@@ -19,7 +19,7 @@ public class VisitorExampleRunner {
 
         ASTNode teoExpr = new Binary(new Number<>(5), BinaryOp.MULT, new Cell("A", 5));
 
-        System.out.println(test.toString());
+        System.out.println(test);
 
         System.out.println(teoExpr.accept(new TypeCheckingVisitor(null)));
     }

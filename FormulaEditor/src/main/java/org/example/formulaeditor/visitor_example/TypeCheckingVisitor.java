@@ -7,7 +7,7 @@ import org.example.formulaeditor.parser.ast.*;
 
 public class TypeCheckingVisitor implements ASTNodeVisitor<VisitorExample.ExcelType> {
 
-    private VisitorExample.ExcelType hint;
+    private final VisitorExample.ExcelType hint;
 
     TypeCheckingVisitor(VisitorExample.ExcelType hint) {
         this.hint = hint;

@@ -4,7 +4,7 @@ import org.example.formulaeditor.parser.ast.ASTNode;
 
 public class Formula {
     String id;
-    private ASTNode ast;
+    private final ASTNode ast;
 
     public Formula(String id, ASTNode ast) {
         this.id = id;
@@ -27,8 +27,7 @@ public class Formula {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof Formula)) return false;
-        Formula other = (Formula) obj;
+        if (!(obj instanceof Formula other)) return false;
         return id.equals(other.id);
     }
 

@@ -6,20 +6,20 @@ import org.example.formulaeditor.parser.ast.*;
 
 public interface ASTNodeVisitor<T> {
 
-    public <N extends java.lang.Number> T visitNumber(Number<N> n);
+    <N extends java.lang.Number> T visitNumber(Number<N> n);
 
-    public T visitCell(Cell n);
+    T visitCell(Cell n);
 
-    public T visitCellRange(CellRange n);
+    T visitCellRange(CellRange n);
 
-    public T visitString(ExcelString n);
+    T visitString(ExcelString n);
 
-    public T visitFunctionCall(FunctionCall n);
+    T visitFunctionCall(FunctionCall n);
 
-    public T visitBoolean(Boolean n);
+    T visitBoolean(Boolean n);
 
-    public T visitBinary(Binary n);
+    T visitBinary(Binary n);
 
-    public T visitNegate(Negate n);
+    T visitNegate(Negate n);
 
 }

@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Workbook {
-    private Map<String, Formula> formulas;
+    private final Map<String, Formula> formulas;
 
     public Workbook() {
         this.formulas = new HashMap<>();
