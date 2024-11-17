@@ -59,7 +59,7 @@ public class CRDTRules {
             return resolveTypeConflict(local, remote);
         }
 
-        System.out.println("Instance of: " + local + "is: " + local.getClass() + " and " + remote + "is: " + remote.getClass());
+        System.out.println("Instance of: " + local + " is: " + local.getClass() + " and " + remote + " is: " + remote.getClass());
         if (local instanceof Binary && remote instanceof Binary) {
             return mergeBinary((Binary) local, (Binary) remote);
         } else if (local instanceof Number && remote instanceof Number) {
@@ -68,6 +68,14 @@ public class CRDTRules {
             return mergeExcelStrings((ExcelString) local, (ExcelString) remote);
         } else if (local instanceof Boolean && remote instanceof Boolean) {
             return mergeBooleans((Boolean) local, (Boolean) remote);
+        } else if (local instanceof Cell && remote instanceof Cell) {
+            return mergeCells((Cell) local, (Cell) remote);
+        } else if (local instanceof CellRange && remote instanceof CellRange) {
+            return mergeCellRanges((CellRange) local, (CellRange) remote);
+        } else if (local instanceof Negate && remote instanceof Negate) {
+            return mergeNegates((Negate) local, (Negate) remote);
+        } else if (local instanceof FunctionCall && remote instanceof FunctionCall) {
+            return mergeFunctionCall((FunctionCall) local, (FunctionCall) remote);
         } else {
             //TODO Implement merge logic for other node types
             //Basic Function, FunctionCall
@@ -261,6 +269,14 @@ public class CRDTRules {
         return new CellRange(mergedStart, mergedEnd);
     }
 
+    // Rule for merging negates
+    private Negate mergeNegates(Negate local, Negate remote) {
+        // Merge the inner nodes recursively
+        ASTNode mergedInnerNode = mergeASTNodes(local.node, remote.node);
+        // Return a new Negate node with the merged inner node
+        return new Negate(mergedInnerNode);
+    }
+
     // Resolve type conflicts between different node types
     private ASTNode resolveTypeConflict(ASTNode local, ASTNode remote) {
         // Resolve conflicts for negate
@@ -276,37 +292,6 @@ public class CRDTRules {
             }
         //TODO Implement conflict resolution
         return local;
-    }
-
-    // Rule for merging strings: choose the longer string or the lexicographically lower string
-    private ExcelString mergeExcelStrings(ExcelString local, ExcelString remote) {
-        String localValue = local.value;
-        String remoteValue = remote.value;
-
-        int localLength = localValue.length();
-        int remoteLength = remoteValue.length();
-
-        if (localLength != remoteLength) {
-            // Return the string with the longer length
-            return localLength > remoteLength ? local : remote;
-        } else {
-            // Lengths are equal, compare lexicographically and return the string that is alphabetically lower
-            int comparisonResult = localValue.compareTo(remoteValue);
-            return comparisonResult <= 0 ? local : remote;
-        }
-    }
-    // Rule for merging two booleans: pick true unless both are false
-    private Boolean mergeBooleans(Boolean local, Boolean remote) {
-        if (local.value == remote.value) {
-            // Both values are the same, return either one
-            return local;
-        } else if (local.value) {
-            // Local is true, remote is false
-            return local;
-        } else {
-            // Local is false, remote is true
-            return remote;
-        }
     }
 
 }
