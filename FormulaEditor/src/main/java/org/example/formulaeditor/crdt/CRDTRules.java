@@ -4,6 +4,7 @@ import org.example.formulaeditor.model.Formula;
 import org.example.formulaeditor.model.Workbook;
 import org.example.formulaeditor.parser.ast.Number;
 import org.example.formulaeditor.parser.ast.*;
+import org.example.formulaeditor.parser.ast.Boolean;
 
 
 public class CRDTRules {
@@ -59,9 +60,13 @@ public class CRDTRules {
             return mergeBinary((Binary) local, (Binary) remote);
         } else if (local instanceof Number && remote instanceof Number) {
             return mergeNumbers((Number<?>) local, (Number<?>) remote);
+        } else if (local instanceof ExcelString && remote instanceof ExcelString) {
+            return mergeExcelStrings((ExcelString) local, (ExcelString) remote);
+        } else if (local instanceof Boolean && remote instanceof Boolean) {
+            return mergeBooleans((Boolean) local, (Boolean) remote);
         } else {
             //TODO Implement merge logic for other node types
-            //BinaryOp, Boolean, Cell, CellRange, ExcelString, Negate, Basic Function
+            //BinaryOp, Boolean, Cell, CellRange, Negate, Basic Function
 
             // If nodes are of the same type but not handled, return local by default
             return local;
@@ -108,4 +113,36 @@ public class CRDTRules {
         //TODO Implement conflict resolution
         return local;
     }
+
+    // Rule for merging strings: choose the longer string or the lexicographically lower string
+    private ExcelString mergeExcelStrings(ExcelString local, ExcelString remote) {
+        String localValue = local.value;
+        String remoteValue = remote.value;
+
+        int localLength = localValue.length();
+        int remoteLength = remoteValue.length();
+
+        if (localLength != remoteLength) {
+            // Return the string with the longer length
+            return localLength > remoteLength ? local : remote;
+        } else {
+            // Lengths are equal, compare lexicographically and return the string that is alphabetically lower
+            int comparisonResult = localValue.compareTo(remoteValue);
+            return comparisonResult <= 0 ? local : remote;
+        }
+    }
+    // Rule for merging two booleans: pick true unless both are false
+    private Boolean mergeBooleans(Boolean local, Boolean remote) {
+        if (local.value == remote.value) {
+            // Both values are the same, return either one
+            return local;
+        } else if (local.value) {
+            // Local is true, remote is false
+            return local;
+        } else {
+            // Local is false, remote is true
+            return remote;
+        }
+    }
+
 }
