@@ -1,0 +1,34 @@
+name: Tests
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4  # Checks out your repository code
+
+      - name: Set up JDK  # Set up Java Development Kit
+        uses: actions/setup-java@v3
+        with:
+          java-version: '19'
+          distribution: 'adopt'
+
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('FormulaEditor/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Install Dependencies
+        working-directory: FormulaEditor
+        run: mvn install -DskipTests=true -B -V
+
+      - name: Run JUnit Tests
+        working-directory: FormulaEditor
+        run: mvn test
