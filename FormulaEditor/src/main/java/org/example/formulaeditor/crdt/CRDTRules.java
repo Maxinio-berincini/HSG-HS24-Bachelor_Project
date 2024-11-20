@@ -297,6 +297,24 @@ public class CRDTRules {
         return new Negate(mergedInnerNode);
     }
 
+
+
+
+    private int getTypePriority(ASTNode node) {
+        if (node instanceof FunctionCall) return 7;
+        if (node instanceof Binary) return 6;
+        if (node instanceof CellRange) return 5;
+        if (node instanceof Cell) return 4;
+        if (node instanceof Number<?>) return 3;
+        if (node instanceof Boolean) return 2;
+        if (node instanceof ExcelString) return 1;
+        return 0; // Default priority for unknown types
+    }
+
+
+
+
+
     // Resolve type conflicts between different node types
     private ASTNode resolveTypeConflict(ASTNode local, ASTNode remote) {
         // Resolve conflicts for negate
@@ -304,13 +322,30 @@ public class CRDTRules {
             return remote;
         } else if (!(local instanceof Negate) && remote instanceof Negate) {
             return local;
-        } else if (local instanceof ExcelString || remote instanceof ExcelString)
-            if (local instanceof ExcelString) {
-                return remote;
-            } else {
-                return local;
-            }
-        //TODO Implement conflict resolution
+
+
+//        } else if (local instanceof ExcelString || remote instanceof ExcelString)
+//            if (local instanceof ExcelString) {
+//                return remote;
+//            } else {
+//                return local;
+//            }
+
+
+
+        }
+        int localPriority = getTypePriority(local);
+        int remotePriority = getTypePriority(remote);
+
+        if (localPriority > remotePriority) {
+            return local;
+        } else if (remotePriority > localPriority) {
+            return remote; }
+
+
+
+
+    //TODO Implement conflict resolution
         return local;
     }
 
