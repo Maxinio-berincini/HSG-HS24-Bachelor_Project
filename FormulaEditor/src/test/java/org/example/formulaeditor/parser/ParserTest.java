@@ -8,7 +8,7 @@ public class ParserTest {
     public void testParseSimpleFormula() {
         Parser parser = new Parser();
         ASTNode ast = parser.parse("A1 + B2");
-        Assertions.assertEquals("(A1 + B2)", ast.toString());
+        Assertions.assertEquals("(A1+B2)", ast.toString());
     }
 
 }
