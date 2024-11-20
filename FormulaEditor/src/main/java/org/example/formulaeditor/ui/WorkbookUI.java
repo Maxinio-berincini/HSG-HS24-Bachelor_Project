@@ -7,9 +7,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.util.converter.DefaultStringConverter;
 import org.example.formulaeditor.FormulaEditor;
@@ -20,7 +23,8 @@ public class WorkbookUI extends BorderPane {
     private final FormulaEditor formulaEditor;
     private final TableView<ObservableList<StringProperty>> tableView;
     private TextField formulaInputField;
-    private Label infoLabel;
+    private Label headerLabel;
+    private Button syncButton;
     private String selectedCellId;
 
     private final int numRows = 6;
@@ -81,8 +85,19 @@ public class WorkbookUI extends BorderPane {
         tableView.setItems(data);
         this.setCenter(tableView);
 
-        // info section and input field
-        infoLabel = new Label("Info Section");
+        // header section and input field
+        headerLabel = new Label("Collaborative Formula Editor");
+        headerLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+
+        syncButton = new Button("Sync");
+        syncButton.setOnAction(event -> handleSyncButton());
+
+        HBox titleBar = new HBox(10);
+        titleBar.getChildren().addAll(headerLabel, syncButton);
+
+        titleBar.setAlignment(Pos.CENTER);
+        HBox.setHgrow(headerLabel, Priority.ALWAYS);
+
         formulaInputField = new TextField();
         formulaInputField.setPromptText("Select a cell");
 
@@ -90,7 +105,7 @@ public class WorkbookUI extends BorderPane {
         formulaInputField.setOnAction(event -> handleFormulaInputFieldEdit());
 
         VBox topSection = new VBox();
-        topSection.getChildren().addAll(infoLabel, formulaInputField);
+        topSection.getChildren().addAll(titleBar, formulaInputField);
 
         this.setTop(topSection);
         this.setCenter(tableView);
@@ -264,6 +279,12 @@ public class WorkbookUI extends BorderPane {
             }
         });
     }
+
+    private void handleSyncButton() {
+        System.out.println("Sync button clicked");
+        // TODO implement synchronization
+    }
+
 
     private void showErrorDialog(String title, String message) {
         Platform.runLater(() -> {
