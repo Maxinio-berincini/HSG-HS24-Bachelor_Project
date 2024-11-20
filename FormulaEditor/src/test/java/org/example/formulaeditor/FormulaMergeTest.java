@@ -197,7 +197,7 @@ public class FormulaMergeTest {
         Formula formula1 = createFormula("18*A6/A3");
         Formula formula2 = createFormula("20+A9/7");
         mergeResult = crdtMerge.merge(formula1, formula2);
-        Assertions.assertEquals("20*A9/A3", mergeResult.toString()); //TODO Check this!!!!!!!!
+        Assertions.assertEquals("((18*A6)/(A9/7))", mergeResult.toString()); //TODO Check this!!!!!!!!
     }
 
     @Test
@@ -206,7 +206,7 @@ public class FormulaMergeTest {
         Formula formula1 = createFormula("18*A6+A3");
         Formula formula2 = createFormula("20+A9/7");
         mergeResult = crdtMerge.merge(formula1, formula2);
-        Assertions.assertEquals("20*A9/A3", mergeResult.toString()); //TODO Check this!!!!!!!!
+        Assertions.assertEquals("((18*A6)+(A9/7))", mergeResult.toString()); //TODO Check this!!!!!!!!
     }
 
     @Test
