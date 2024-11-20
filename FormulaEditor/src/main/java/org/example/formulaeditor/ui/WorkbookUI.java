@@ -7,6 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -14,10 +15,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.stage.WindowEvent;
 import javafx.util.converter.DefaultStringConverter;
 import org.example.formulaeditor.FormulaEditor;
 import org.example.formulaeditor.model.Formula;
 import org.example.formulaeditor.model.Workbook;
+import org.example.formulaeditor.network.SyncManager;
 
 public class WorkbookUI extends BorderPane {
     private final FormulaEditor formulaEditor;
@@ -34,6 +37,9 @@ public class WorkbookUI extends BorderPane {
         this.formulaEditor = formulaEditor;
         this.tableView = new TableView<>();
         initializeUI();
+
+        // Register the workbook with SyncManager
+        SyncManager.getInstance().registerWorkbook(formulaEditor.getWorkbook());
 
         // Add listener to observe changes in the formulas map
         formulaEditor.getWorkbook().getFormulasMap().addListener((MapChangeListener<String, Formula>) change -> {
@@ -282,7 +288,13 @@ public class WorkbookUI extends BorderPane {
 
     private void handleSyncButton() {
         System.out.println("Sync button clicked");
+        SyncManager.getInstance().synchronize(formulaEditor.getWorkbook());
         // TODO implement synchronization
+    }
+
+    public void setOnCloseRequest(EventHandler<WindowEvent> eventHandler) {
+        // Unregister the workbook from SyncManager
+        SyncManager.getInstance().unregisterWorkbook(formulaEditor.getWorkbook());
     }
 
 
