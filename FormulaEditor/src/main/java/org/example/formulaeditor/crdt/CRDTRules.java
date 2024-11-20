@@ -298,8 +298,6 @@ public class CRDTRules {
     }
 
 
-
-
     private int getTypePriority(ASTNode node) {
         if (node instanceof FunctionCall) return 7;
         if (node instanceof Binary) return 6;
@@ -312,9 +310,6 @@ public class CRDTRules {
     }
 
 
-
-
-
     // Resolve type conflicts between different node types
     private ASTNode resolveTypeConflict(ASTNode local, ASTNode remote) {
         // Resolve conflicts for negate
@@ -323,17 +318,8 @@ public class CRDTRules {
         } else if (!(local instanceof Negate) && remote instanceof Negate) {
             return local;
 
-
-//        } else if (local instanceof ExcelString || remote instanceof ExcelString)
-//            if (local instanceof ExcelString) {
-//                return remote;
-//            } else {
-//                return local;
-//            }
-
-
             // try merging binary node with other types, if compatible
-        }else if (isCompatible(local, remote)) {
+        } else if (isCompatible(local, remote)) {
             // Attempt to merge nodes
             return attemptMergeDifferentTypes(local, remote);
         } else {
