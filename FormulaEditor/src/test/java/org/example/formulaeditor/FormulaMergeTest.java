@@ -96,7 +96,7 @@ public class FormulaMergeTest {
     @Test
     public void differentCellRanges() {
         Formula formula1 = createFormula("SUM(A1:A3)");
-        Formula formula2 = createFormula("SUM(D5:D10)"); // TODO ASK ABOUT WHY IF THIS CELL SAYS SUM(D5:D10 without the last bracket a strange error occurs
+        Formula formula2 = createFormula("SUM(D5:D10)");
         mergeResult = crdtMerge.merge(formula1, formula2);
         Assertions.assertEquals("SUM(D5:D10)", mergeResult.toString());
     }
@@ -115,7 +115,7 @@ public class FormulaMergeTest {
         Formula formula1 = createFormula("MIN(A1:A3)/2");
         Formula formula2 = createFormula("MIN(A1:A3)/4");
         mergeResult = crdtMerge.merge(formula1, formula2);
-        Assertions.assertEquals("(MIN(A1:A3)/4)", mergeResult.toString()); // TODO check whats going on here. It seems right but strange bracket placement
+        Assertions.assertEquals("(MIN(A1:A3)/4)", mergeResult.toString());
     }
 
     @Test
@@ -124,7 +124,7 @@ public class FormulaMergeTest {
         Formula formula1 = createFormula("MIN(A1:A3)/2");
         Formula formula2 = createFormula("MIN(A1:A3)+4");
         mergeResult = crdtMerge.merge(formula1, formula2);
-        Assertions.assertEquals("(MIN(A1:A3)/4)", mergeResult.toString()); // TODO same problem as above
+        Assertions.assertEquals("(MIN(A1:A3)/4)", mergeResult.toString());
     }
 
     @Test
@@ -133,7 +133,7 @@ public class FormulaMergeTest {
         Formula formula1 = createFormula("MIN(A1:A3)/2");
         Formula formula2 = createFormula("MIN(A1:A5)");
         mergeResult = crdtMerge.merge(formula1, formula2);
-        Assertions.assertEquals("(MIN(A1:A5)/2)", mergeResult.toString()); // TODO appending is messing
+        Assertions.assertEquals("(MIN(A1:A5)/2)", mergeResult.toString());
     }
 
     @Test
@@ -141,7 +141,7 @@ public class FormulaMergeTest {
         Formula formula1 = createFormula("MIN(A1:A2)/2");
         Formula formula2 = createFormula("MIN(A1:A3)+4");
         mergeResult = crdtMerge.merge(formula1, formula2);
-        Assertions.assertEquals("(MIN(A1:A3)/4)", mergeResult.toString()); // TODO bracket issue here again
+        Assertions.assertEquals("(MIN(A1:A3)/4)", mergeResult.toString());
     }
 
     @Test
@@ -157,7 +157,7 @@ public class FormulaMergeTest {
         Formula formula1 = createFormula("15*A8");
         Formula formula2 = createFormula("15*A7");
         mergeResult = crdtMerge.merge(formula1, formula2);
-        Assertions.assertEquals("(15*A8)", mergeResult.toString()); //TODO Bracket issue
+        Assertions.assertEquals("(15*A8)", mergeResult.toString());
     }
 
     @Test
@@ -165,7 +165,7 @@ public class FormulaMergeTest {
         Formula formula1 = createFormula("18*A6");
         Formula formula2 = createFormula("20+A9");
         mergeResult = crdtMerge.merge(formula1, formula2);
-        Assertions.assertEquals("(20*A9)", mergeResult.toString()); //TODO Bracket issue
+        Assertions.assertEquals("(20*A9)", mergeResult.toString());
     }
 
     @Test
@@ -173,7 +173,7 @@ public class FormulaMergeTest {
         Formula formula1 = createFormula("10*A5");
         Formula formula2 = createFormula("15*A5");
         mergeResult = crdtMerge.merge(formula1, formula2);
-        Assertions.assertEquals("(15*A5)", mergeResult.toString()); //TODO Bracket issue
+        Assertions.assertEquals("(15*A5)", mergeResult.toString());
     }
 
     @Test
@@ -181,7 +181,7 @@ public class FormulaMergeTest {
         Formula formula1 = createFormula("18+A5");
         Formula formula2 = createFormula("11*A5");
         mergeResult = crdtMerge.merge(formula1, formula2);
-        Assertions.assertEquals("(18*A5)", mergeResult.toString()); //TODO Bracket issue
+        Assertions.assertEquals("(18*A5)", mergeResult.toString());
     }
 
     @Test
@@ -197,7 +197,7 @@ public class FormulaMergeTest {
         Formula formula1 = createFormula("18*A6/A3");
         Formula formula2 = createFormula("20+A9/7");
         mergeResult = crdtMerge.merge(formula1, formula2);
-        Assertions.assertEquals("((18*A6)/(A9/7))", mergeResult.toString()); //TODO Check this!!!!!!!!
+        Assertions.assertEquals("((18*A6)/(A9/7))", mergeResult.toString());
     }
 
     @Test
@@ -206,7 +206,7 @@ public class FormulaMergeTest {
         Formula formula1 = createFormula("18*A6+A3");
         Formula formula2 = createFormula("20+A9/7");
         mergeResult = crdtMerge.merge(formula1, formula2);
-        Assertions.assertEquals("((18*A6)+(A9/7))", mergeResult.toString()); //TODO Check this!!!!!!!!
+        Assertions.assertEquals("((18*A6)+(A9/7))", mergeResult.toString());
     }
 
     @Test
@@ -214,7 +214,7 @@ public class FormulaMergeTest {
         Formula formula1 = createFormula("A6");
         Formula formula2 = createFormula("17*3+4");
         mergeResult = crdtMerge.merge(formula1, formula2);
-        Assertions.assertEquals("((17*3)+4)", mergeResult.toString()); //TODO BRACKET ISSUE
+        Assertions.assertEquals("((17*3)+4)", mergeResult.toString());
     }
 
     @Test
@@ -222,7 +222,7 @@ public class FormulaMergeTest {
         Formula formula1 = createFormula("15*D7");
         Formula formula2 = createFormula("15*C14");
         mergeResult = crdtMerge.merge(formula1, formula2);
-        Assertions.assertEquals("(15*D7)", mergeResult.toString()); //TODO BRACKET ISSUE
+        Assertions.assertEquals("(15*D7)", mergeResult.toString());
     }
 
     //TODO Invalid Input --> add Input Validation
@@ -240,7 +240,7 @@ public class FormulaMergeTest {
         Formula formula1 = createFormula("A5*A7");
         Formula formula2 = createFormula("17*10");
         mergeResult = crdtMerge.merge(formula1, formula2);
-        Assertions.assertEquals("(A5*A7)", mergeResult.toString()); //TODO BRACKET ISSUE
+        Assertions.assertEquals("(A5*A7)", mergeResult.toString());
     }
 
     @Test
@@ -329,7 +329,7 @@ public class FormulaMergeTest {
         Formula formula1 = createFormula("10-3");
         Formula formula2 = createFormula("true");
         mergeResult = crdtMerge.merge(formula1, formula2);
-        Assertions.assertEquals("(10-3)", mergeResult.toString()); //TODO Bracket Issue
+        Assertions.assertEquals("(10-3)", mergeResult.toString());
     }
 
 }
