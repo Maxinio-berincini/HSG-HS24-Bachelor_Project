@@ -144,12 +144,13 @@ public class FormulaMergeTest {
         Assertions.assertEquals("(MIN(A1:A3)/4)", mergeResult.toString());
     }
 
+    //TODO Append in the middle keep in mind for later tests
     @Test
     public void longerAppendsAndNumbers() {
         Formula formula1 = createFormula("MIN(A1:A3)/2-1");
         Formula formula2 = createFormula("MIN(A1:A3)+4");
         mergeResult = crdtMerge.merge(formula1, formula2);
-        Assertions.assertEquals("MIN(A1:A3)/4-1", mergeResult.toString()); //TODO idk what is going on here
+        Assertions.assertEquals("((MIN(A1:A3)/2)+4)", mergeResult.toString());
     }
 
     @Test
