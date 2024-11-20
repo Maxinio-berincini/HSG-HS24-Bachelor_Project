@@ -18,6 +18,6 @@ public class Binary implements ASTNode {
     }
 
     public String toString() {
-        return "(" + this.left.toString() + " " + this.op.toString() + " " + this.right.toString() + ")";
+        return "(" + this.left.toString() + this.op.toString() + this.right.toString() + ")";
     }
 }
