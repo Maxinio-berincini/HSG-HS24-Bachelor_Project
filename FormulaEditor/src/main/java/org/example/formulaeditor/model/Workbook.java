@@ -2,10 +2,11 @@ package org.example.formulaeditor.model;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
+
 import java.util.Collection;
 
 public class Workbook {
-    private ObservableMap<String, Formula> formulas;
+    private final ObservableMap<String, Formula> formulas;
 
     public Workbook() {
         this.formulas = FXCollections.observableHashMap();

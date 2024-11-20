@@ -43,7 +43,7 @@ public class WorkbookUI extends BorderPane {
 
         // Add listener to observe changes in the formulas map
         formulaEditor.getWorkbook().getFormulasMap().addListener((MapChangeListener<String, Formula>) change -> {
-             if (change.wasAdded()) {
+            if (change.wasAdded()) {
                 System.out.println("Formula added at cell: " + change.getKey());
             } else if (change.wasRemoved()) {
                 System.out.println("Formula removed from cell: " + change.getKey());
@@ -121,6 +121,7 @@ public class WorkbookUI extends BorderPane {
         selectedCells.addListener((ListChangeListener<TablePosition>) change -> updateFormulaInputField());
 
     }
+
     private TableColumn<ObservableList<StringProperty>, String> getColumn(int colIndex) {
         final int colIdx = colIndex;
         char colChar = (char) ('A' + colIndex);
@@ -258,7 +259,6 @@ public class WorkbookUI extends BorderPane {
             refreshTableView();
         }
     }
-
 
 
     private String getCellDisplayValue(String cellId) {
