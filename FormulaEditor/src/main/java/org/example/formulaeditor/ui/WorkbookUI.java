@@ -4,11 +4,13 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.util.converter.DefaultStringConverter;
 import org.example.formulaeditor.FormulaEditor;
 import org.example.formulaeditor.model.Formula;
@@ -17,6 +19,9 @@ import org.example.formulaeditor.model.Workbook;
 public class WorkbookUI extends BorderPane {
     private final FormulaEditor formulaEditor;
     private final TableView<ObservableList<StringProperty>> tableView;
+    private TextField formulaInputField;
+    private Label infoLabel;
+    private String selectedCellId;
 
     private final int numRows = 6;
     private final int numColumns = 6;
@@ -75,6 +80,25 @@ public class WorkbookUI extends BorderPane {
 
         tableView.setItems(data);
         this.setCenter(tableView);
+
+        // info section and input field
+        infoLabel = new Label("Info Section");
+        formulaInputField = new TextField();
+        formulaInputField.setPromptText("Select a cell");
+
+        // Handle input field edits
+        formulaInputField.setOnAction(event -> handleFormulaInputFieldEdit());
+
+        VBox topSection = new VBox();
+        topSection.getChildren().addAll(infoLabel, formulaInputField);
+
+        this.setTop(topSection);
+        this.setCenter(tableView);
+
+        tableView.getSelectionModel().setCellSelectionEnabled(true);
+        ObservableList<TablePosition> selectedCells = tableView.getSelectionModel().getSelectedCells();
+        selectedCells.addListener((ListChangeListener<TablePosition>) change -> updateFormulaInputField());
+
     }
     private TableColumn<ObservableList<StringProperty>, String> getColumn(int colIndex) {
         final int colIdx = colIndex;
@@ -101,6 +125,13 @@ public class WorkbookUI extends BorderPane {
             handleCellEdit(cellId, newValue);
 
             event.getRowValue().get(colIdx).set(newValue);
+            // Update formula input field if on cell select
+            TablePosition selectedPos = tableView.getSelectionModel().getSelectedCells().isEmpty() ? null
+                    : tableView.getSelectionModel().getSelectedCells().get(0);
+            if (selectedPos != null && selectedPos.getRow() == event.getTablePosition().getRow()
+                    && selectedPos.getColumn() == event.getTablePosition().getColumn()) {
+                updateFormulaInputField();
+            }
         });
 
         column.setPrefWidth(100);
@@ -151,6 +182,7 @@ public class WorkbookUI extends BorderPane {
                 if (formulaExists) {
                     // If formula exists, update it
                     formulaEditor.updateFormula(cellId, input);
+                    refreshTableView();
                 } else {
                     // If no formula exists, add it
                     formulaEditor.addFormula(cellId, input);
@@ -162,6 +194,51 @@ public class WorkbookUI extends BorderPane {
             showErrorDialog("Error", "Failed to parse the formula: " + e.getMessage());
         }
     }
+
+    private void updateFormulaInputField() {
+        Platform.runLater(() -> {
+            TablePosition pos = tableView.getSelectionModel().getSelectedCells().isEmpty() ? null
+                    : tableView.getSelectionModel().getSelectedCells().get(0);
+            if (pos != null) {
+                int rowIndex = pos.getRow() + 1;
+                int colIndex = pos.getColumn() - 1;
+                if (colIndex >= 0) {
+                    String cellId = getCellId(colIndex, rowIndex);
+                    selectedCellId = cellId;
+                    String cellFormula = getCellFormula(cellId);
+                    formulaInputField.setText(cellFormula);
+                } else {
+                    formulaInputField.setText("");
+                    selectedCellId = null;
+                }
+            } else {
+                formulaInputField.setText("");
+                selectedCellId = null;
+            }
+        });
+    }
+
+    private String getCellFormula(String cellId) {
+        Workbook workbook = formulaEditor.getWorkbook();
+        Formula formula = workbook.getFormula(cellId);
+        if (formula != null) {
+            // Return the formula as a string
+            return formula.toString();
+        } else {
+            return "";
+        }
+    }
+
+    private void handleFormulaInputFieldEdit() {
+        if (selectedCellId != null) {
+            String input = formulaInputField.getText();
+            handleCellEdit(selectedCellId, input);
+            // Update the cell value in the table
+            refreshTableView();
+        }
+    }
+
+
 
     private String getCellDisplayValue(String cellId) {
         Workbook workbook = formulaEditor.getWorkbook();
