@@ -21,6 +21,18 @@ public class FormulaEditor {
         return formula.toString();
     }
 
+    public String updateFormula(String id, String input) throws Exception {
+        // Overwrite the existing formula
+        ASTNode ast = parser.parse(input);
+        Formula formula = new Formula(id, ast);
+        workbook.addFormula(formula);
+        return formula.toString();
+    }
+
+    public void deleteFormula(String id) {
+        workbook.removeFormula(id);
+    }
+
     public Workbook getWorkbook() {
         return workbook;
     }

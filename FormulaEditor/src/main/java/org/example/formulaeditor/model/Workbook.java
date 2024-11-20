@@ -23,6 +23,10 @@ public class Workbook {
         return formulas.values();
     }
 
+    public void removeFormula(String id) {
+        formulas.remove(id);
+    }
+
     public ObservableMap<String, Formula> getFormulasMap() {
         return formulas;
     }
