@@ -22,8 +22,6 @@ public class FormulaEditor {
     }
 
     public String updateFormula(String id, String input) throws Exception {
-        // remove existing formula
-        workbook.removeFormula(id);
         // Overwrite the existing formula
         ASTNode ast = parser.parse(input);
         Formula formula = new Formula(id, ast);
