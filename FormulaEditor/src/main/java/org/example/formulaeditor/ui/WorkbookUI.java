@@ -129,7 +129,30 @@ public class WorkbookUI extends BorderPane {
     }
 
     private void handleCellEdit(String cellId, String input) {
+        try {
+            Workbook workbook = formulaEditor.getWorkbook();
+            boolean formulaExists = workbook.containsFormula(cellId);
 
+            if (input == null || input.trim().isEmpty()) {
+                if (formulaExists) {
+                    // If input is empty and formula exists, delete formula in workbook
+                    formulaEditor.deleteFormula(cellId);
+                }
+                // If input is empty and no formula exists, do nothing
+            } else {
+                if (formulaExists) {
+                    // If formula exists, update it
+                    formulaEditor.updateFormula(cellId, input);
+                } else {
+                    // If no formula exists, add it
+                    formulaEditor.addFormula(cellId, input);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Handle parsing errors (e.g., show an error message)
+            showErrorDialog("Error", "Failed to parse the formula: " + e.getMessage());
+        }
     }
 
     private String getCellDisplayValue(String cellId) {
@@ -157,5 +180,14 @@ public class WorkbookUI extends BorderPane {
         });
     }
 
+    private void showErrorDialog(String title, String message) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(message);
+            alert.showAndWait();
+        });
+    }
 
 }
