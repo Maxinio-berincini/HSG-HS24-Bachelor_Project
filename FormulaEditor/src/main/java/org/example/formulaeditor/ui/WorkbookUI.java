@@ -27,7 +27,15 @@ public class WorkbookUI extends BorderPane {
         initializeUI();
 
         // Add listener to observe changes in the formulas map
-        formulaEditor.getWorkbook().getFormulasMap().addListener((MapChangeListener<String, Formula>) change -> refreshTableView());
+        formulaEditor.getWorkbook().getFormulasMap().addListener((MapChangeListener<String, Formula>) change -> {
+             if (change.wasAdded()) {
+                System.out.println("Formula added at cell: " + change.getKey());
+            } else if (change.wasRemoved()) {
+                System.out.println("Formula removed from cell: " + change.getKey());
+            }
+            refreshTableView();
+        });
+
     }
 
     private void initializeUI() {
