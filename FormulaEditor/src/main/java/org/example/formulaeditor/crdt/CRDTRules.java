@@ -298,8 +298,6 @@ public class CRDTRules {
     }
 
 
-
-
     private int getTypePriority(ASTNode node) {
         if (node instanceof FunctionCall) return 7;
         if (node instanceof Binary) return 6;
@@ -312,9 +310,6 @@ public class CRDTRules {
     }
 
 
-
-
-
     // Resolve type conflicts between different node types
     private ASTNode resolveTypeConflict(ASTNode local, ASTNode remote) {
         // Resolve conflicts for negate
@@ -323,30 +318,62 @@ public class CRDTRules {
         } else if (!(local instanceof Negate) && remote instanceof Negate) {
             return local;
 
-
-//        } else if (local instanceof ExcelString || remote instanceof ExcelString)
-//            if (local instanceof ExcelString) {
-//                return remote;
-//            } else {
-//                return local;
-//            }
-
-
-
+            // try merging binary node with other types, if compatible
+        } else if (isCompatible(local, remote)) {
+            // Attempt to merge nodes
+            return attemptMergeDifferentTypes(local, remote);
+        } else {
+            // Nodes are not compatible --> choose preferred
+            return choosePreferredNode(local, remote);
         }
+
+    }
+
+    private boolean isCompatible(ASTNode local, ASTNode remote) {
+        // Nodes are compatible if they are of the same type
+        if (local.getClass().equals(remote.getClass())) {
+            return true;
+        }
+
+        // merge binary with function call
+        if (local instanceof Binary localBinary && remote instanceof FunctionCall) {
+            return localBinary.left.getClass().equals(remote.getClass());
+        }
+        if (local instanceof FunctionCall && remote instanceof Binary remoteBinary) {
+            return remoteBinary.left.getClass().equals(local.getClass());
+        }
+        // TODO define other compatibility conditions
+        return false;
+    }
+
+    private ASTNode attemptMergeDifferentTypes(ASTNode local, ASTNode remote) {
+        // Try to merge binary with function call
+        if (local instanceof Binary localBinary && remote instanceof FunctionCall) {
+            ASTNode mergedLeft = mergeASTNodes(localBinary.left, remote);
+            // reconstruct Binary with  merged left side
+            return new Binary(mergedLeft, localBinary.op, localBinary.right);
+        } else if (local instanceof FunctionCall && remote instanceof Binary remoteBinary) {
+            ASTNode mergedLeft = mergeASTNodes(local, remoteBinary.left);
+            // reconstruct Binary with merged left side
+            return new Binary(mergedLeft, remoteBinary.op, remoteBinary.right);
+        } else {
+            // If we cannot merge, decide which node to prefer
+            return choosePreferredNode(local, remote);
+        }
+        // TODO define other merge strategies
+    }
+
+    private ASTNode choosePreferredNode(ASTNode local, ASTNode remote) {
         int localPriority = getTypePriority(local);
         int remotePriority = getTypePriority(remote);
 
         if (localPriority > remotePriority) {
             return local;
         } else if (remotePriority > localPriority) {
-            return remote; }
-
-
-
-
-    //TODO Implement conflict resolution
-        return local;
+            return remote;
+        } else {
+            return local;
+        }
     }
 
 }

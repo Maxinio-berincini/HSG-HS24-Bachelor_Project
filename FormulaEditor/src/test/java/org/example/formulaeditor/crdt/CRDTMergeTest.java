@@ -36,7 +36,7 @@ public class CRDTMergeTest {
         // merge is random --> check formula is  local or remote
         Formula mergedA1 = merged.getFormula("A1");
         String mergedA1String = mergedA1.toString();
-        boolean isLocalA1 = mergedA1String.equals("(A2 + B2)");
+        boolean isLocalA1 = mergedA1String.equals("(A2+B2)");
         boolean isRemoteA1 = mergedA1String.equals("SUM(A2:A10)");
         Assertions.assertTrue(isLocalA1 || isRemoteA1);
     }
