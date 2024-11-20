@@ -1,8 +1,10 @@
 package org.example.formulaeditor.ui;
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -23,6 +25,9 @@ public class WorkbookUI extends BorderPane {
         this.formulaEditor = formulaEditor;
         this.tableView = new TableView<>();
         initializeUI();
+
+        // Add listener to observe changes in the formulas map
+        formulaEditor.getWorkbook().getFormulasMap().addListener((MapChangeListener<String, Formula>) change -> refreshTableView());
     }
 
     private void initializeUI() {
@@ -137,6 +142,19 @@ public class WorkbookUI extends BorderPane {
         } else {
             return "";
         }
+    }
+
+    private void refreshTableView() {
+        Platform.runLater(() -> {
+            for (int rowIndex = 1; rowIndex <= numRows; rowIndex++) {
+                ObservableList<StringProperty> row = tableView.getItems().get(rowIndex - 1);
+                for (int colIndex = 0; colIndex < numColumns; colIndex++) {
+                    String cellId = getCellId(colIndex, rowIndex);
+                    String cellValue = getCellDisplayValue(cellId);
+                    row.get(colIndex).set(cellValue);
+                }
+            }
+        });
     }
 
 
