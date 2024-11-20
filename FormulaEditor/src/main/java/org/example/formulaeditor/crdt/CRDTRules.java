@@ -334,19 +334,20 @@ public class CRDTRules {
 
 
         }
+        return choosePreferredNode(local, remote);
+    }
+
+    private ASTNode choosePreferredNode(ASTNode local, ASTNode remote) {
         int localPriority = getTypePriority(local);
         int remotePriority = getTypePriority(remote);
 
         if (localPriority > remotePriority) {
             return local;
         } else if (remotePriority > localPriority) {
-            return remote; }
-
-
-
-
-    //TODO Implement conflict resolution
-        return local;
+            return remote;
+        } else {
+            return local;
+        }
     }
 
 }
