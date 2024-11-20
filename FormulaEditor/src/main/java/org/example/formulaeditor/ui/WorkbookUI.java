@@ -8,14 +8,19 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.BorderPane;
 import javafx.util.converter.DefaultStringConverter;
+import org.example.formulaeditor.FormulaEditor;
+import org.example.formulaeditor.model.Formula;
+import org.example.formulaeditor.model.Workbook;
 
 public class WorkbookUI extends BorderPane {
+    private final FormulaEditor formulaEditor;
     private final TableView<ObservableList<StringProperty>> tableView;
 
     private final int numRows = 6;
     private final int numColumns = 6;
 
-    public WorkbookUI() {
+    public WorkbookUI(FormulaEditor formulaEditor) {
+        this.formulaEditor = formulaEditor;
         this.tableView = new TableView<>();
         initializeUI();
     }
@@ -95,7 +100,7 @@ public class WorkbookUI extends BorderPane {
         TableColumn<ObservableList<StringProperty>, String> rowNumberCol = new TableColumn<>(" ");
         rowNumberCol.setPrefWidth(50);
 
-        rowNumberCol.setCellFactory(column -> new TableCell<>() {
+        rowNumberCol.setCellFactory(column -> new TableCell<ObservableList<StringProperty>, String>() {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -123,7 +128,15 @@ public class WorkbookUI extends BorderPane {
     }
 
     private String getCellDisplayValue(String cellId) {
-        return "";
+        Workbook workbook = formulaEditor.getWorkbook();
+        Formula formula = workbook.getFormula(cellId);
+        if (formula != null) {
+            // Return the formula
+            // TODO: Display the evaluated result instead of the formula string
+            return formula.toString();
+        } else {
+            return "";
+        }
     }
 
 
