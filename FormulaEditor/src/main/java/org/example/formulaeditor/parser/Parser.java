@@ -145,6 +145,7 @@ public class Parser {
                         if (cursor >= tokens.length || !tokens[cursor].equals(")")) {
                             throw new ParseException("Expected closed parenthesis, unexpected EOF");
                         }
+                        cursor++;
                         return Optional.of(result);
                     } else if (tokens[cursor].equals("+")) {
                         cursor++;
