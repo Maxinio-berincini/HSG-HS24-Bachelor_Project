@@ -1,14 +1,15 @@
 package org.example.formulaeditor.model;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableMap;
+
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Workbook {
-    private final Map<String, Formula> formulas;
+    private final ObservableMap<String, Formula> formulas;
 
     public Workbook() {
-        this.formulas = new HashMap<>();
+        this.formulas = FXCollections.observableHashMap();
     }
 
     public void addFormula(Formula formula) {
@@ -23,13 +24,23 @@ public class Workbook {
         return formulas.values();
     }
 
-    public Map<String, Formula> getFormulasMap() {
+    public void removeFormula(String id) {
+        formulas.remove(id);
+    }
+
+    public ObservableMap<String, Formula> getFormulasMap() {
         return formulas;
     }
 
     //check if formula exists in workbook
     public boolean containsFormula(String id) {
         return formulas.containsKey(id);
+    }
+
+    //update workbook with merged formulas
+    public void updateFrom(Workbook other) {
+        this.formulas.clear();
+        this.formulas.putAll(other.getFormulasMap());
     }
 
     //TODO Cell handling
