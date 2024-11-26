@@ -11,10 +11,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.WindowEvent;
 import javafx.util.converter.DefaultStringConverter;
 import org.example.formulaeditor.FormulaEditor;
@@ -96,6 +93,7 @@ public class WorkbookUI extends BorderPane {
         headerLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
         syncButton = new Button("Sync");
+        syncButton.getStyleClass().add("sync-button");
         syncButton.setOnAction(event -> handleSyncButton());
 
         HBox titleBar = new HBox(10);
@@ -115,6 +113,9 @@ public class WorkbookUI extends BorderPane {
 
         this.setTop(topSection);
         this.setCenter(tableView);
+        // Add the CSS stylesheet to the root node
+        this.getStylesheets().add(getClass().getResource("/tableview.css").toExternalForm());
+
 
         tableView.getSelectionModel().setCellSelectionEnabled(true);
         ObservableList<TablePosition> selectedCells = tableView.getSelectionModel().getSelectedCells();

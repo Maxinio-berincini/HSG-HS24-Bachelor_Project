@@ -1,0 +1,45 @@
+/* tableview.css */
+
+/* Remove alternating row colors */
+.table-view .table-row-cell {
+    -fx-background-color: rgb(255, 255, 255); /* Set all row backgrounds to white */
+}
+
+/* Keep default selection and hover colors */
+.table-view .table-row-cell:filled:selected, .table-view .table-row-cell:filled:hover {
+    -fx-background-color: -fx-selection-bar;
+}
+
+/* Make vertical gridlines black */
+.table-view {
+    -fx-border-color: rgb(192, 192, 192); /* Change this to red to see what this does */
+    -fx-table-cell-border-color: rgb(192, 192, 192);
+}
+
+/* Make Horizontal grid lines */
+.table-row-cell {
+    -fx-border-color: rgb(192, 192, 192) transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+}
+
+.table-view, .table-view .column-header {
+    -fx-font-family: Calibri, Arial, sans-serif;
+    -fx-font-size: 12pt;
+}
+
+.sync-button {
+    -fx-padding: 5px 10px;
+    -fx-background-color: #4CAF50; /* Green background */
+    -fx-text-fill: white;          /* White text */
+    -fx-font-weight: bold;         /* Bold text */
+    -fx-border-radius: 5px;        /* Rounded corners */
+    -fx-background-radius: 5px;
+}
+
+.sync-button:hover {
+    -fx-background-color: #45a049; /* Darker green on hover */
+}
+
+
+
+
