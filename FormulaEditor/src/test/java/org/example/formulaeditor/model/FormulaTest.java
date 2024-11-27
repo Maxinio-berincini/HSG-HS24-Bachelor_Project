@@ -11,7 +11,8 @@ public class FormulaTest {
         Parser parser = new Parser();
         ASTNode ast = parser.parse("SUM(A1:A10)");
         String id = "A1";
-        Formula formula = new Formula(id, ast);
+        VersionVector versionVector = new VersionVector();
+        Formula formula = new Formula(id, ast, versionVector);
         Assertions.assertEquals("SUM(A1:A10)", formula.toString());
         Assertions.assertEquals("A1", formula.getId());
     }

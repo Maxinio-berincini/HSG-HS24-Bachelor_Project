@@ -1,6 +1,7 @@
 package org.example.formulaeditor.crdt;
 
 import org.example.formulaeditor.model.Formula;
+import org.example.formulaeditor.model.VersionVector;
 import org.example.formulaeditor.model.Workbook;
 import org.example.formulaeditor.parser.Parser;
 import org.junit.jupiter.api.Assertions;
@@ -11,15 +12,17 @@ public class CRDTMergeTest {
     public void testMergeWorkbooks() throws Exception {
         Parser parser = new Parser();
 
+        VersionVector versionVector = new VersionVector();
+
         // Local workbook
         Workbook local = new Workbook();
-        local.addFormula(new Formula("A1", parser.parse("A2 + B2")));
-        local.addFormula(new Formula("A2", parser.parse("5")));
+        local.addFormula(new Formula("A1", parser.parse("A2 + B2"), versionVector));
+        local.addFormula(new Formula("A2", parser.parse("5"), versionVector));
 
         // Remote workbook
         Workbook remote = new Workbook();
-        remote.addFormula(new Formula("A1", parser.parse("SUM(A2:A10)")));
-        remote.addFormula(new Formula("B1", parser.parse("10")));
+        remote.addFormula(new Formula("A1", parser.parse("SUM(A2:A10)"), versionVector));
+        remote.addFormula(new Formula("B1", parser.parse("10"), versionVector));
 
         CRDTRules rules = new CRDTRules();
         CRDTMerge merger = new CRDTMerge(rules);
