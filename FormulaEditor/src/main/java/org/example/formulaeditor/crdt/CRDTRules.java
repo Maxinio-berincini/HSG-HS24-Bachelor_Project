@@ -1,6 +1,7 @@
 package org.example.formulaeditor.crdt;
 
 import org.example.formulaeditor.model.Formula;
+import org.example.formulaeditor.model.VersionVector;
 import org.example.formulaeditor.model.Workbook;
 import org.example.formulaeditor.parser.ast.Boolean;
 import org.example.formulaeditor.parser.ast.Number;
@@ -16,10 +17,23 @@ public class CRDTRules {
     public Formula applyRules(Formula local, Formula remote) {
         //TODO merge logic
 
-        ASTNode mergedAST = mergeASTNodes(local.getAst(), remote.getAst());
-        // Create a new Formula with the merged AST
-        return new Formula(local.getId(), mergedAST);
+        // version verctor logic
+        if (local.getVersionVector().isNewerVersion(remote.getVersionVector())) {
+            return local;
+        } else if (remote.getVersionVector().isNewerVersion(local.getVersionVector())) {
+            return remote;
+        } else {
 
+            ASTNode mergedAST = mergeASTNodes(local.getAst(), remote.getAst());
+
+            // Merge version vectors
+            VersionVector mergedVersionVector = new VersionVector(local.getVersionVector().getVersions());
+            mergedVersionVector.merge(remote.getVersionVector());
+
+            System.out.println("local Version Vector: " + local.getVersionVector() + " remote Version Vector: " + remote.getVersionVector() + " merged Version Vector: " + mergedVersionVector);
+            // Create a new Formula with the merged AST and new version vector
+            return new Formula(local.getId(), mergedAST, mergedVersionVector);
+        }
     }
 
     public Workbook applyRules(Workbook local, Workbook remote) {
