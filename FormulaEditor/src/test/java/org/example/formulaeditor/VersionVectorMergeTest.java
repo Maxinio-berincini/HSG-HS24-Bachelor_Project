@@ -5,7 +5,6 @@ import org.example.formulaeditor.crdt.CRDTMerge;
 import org.example.formulaeditor.crdt.CRDTRules;
 import org.example.formulaeditor.model.Formula;
 import org.example.formulaeditor.model.VersionVector;
-
 import org.example.formulaeditor.parser.Parser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -36,7 +35,7 @@ public class VersionVectorMergeTest {
     @Test
     public void singleSum() {
         Formula formula1 = createFormula("SUM(5,2)", "Instance1", 1);
-        Formula formula2 = createFormula("SUM(1,8)", "Instance2",3);
+        Formula formula2 = createFormula("SUM(1,8)", "Instance2", 3);
         mergeResult = crdtMerge.merge(formula1, formula2);
 
 
@@ -80,7 +79,7 @@ public class VersionVectorMergeTest {
         VersionVector mergedVersionVector = mergedFormula.getVersionVector();
 
         //check if the merged formula is the one from Instance A
-        Assertions.assertEquals(formulaA.toString(), mergedFormula.toString(),"Expected the formula from InstanceA to be chosen");
+        Assertions.assertEquals(formulaA.toString(), mergedFormula.toString(), "Expected the formula from InstanceA to be chosen");
 
         //check if the merged version vector is newer than the one from Instance B
         Assertions.assertTrue(mergedVersionVector.isNewerVersion(versionVectorB));

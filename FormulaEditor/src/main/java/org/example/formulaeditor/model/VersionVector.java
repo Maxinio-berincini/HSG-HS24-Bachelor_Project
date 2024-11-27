@@ -1,11 +1,10 @@
 package org.example.formulaeditor.model;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class VersionVector{
+public class VersionVector {
     private final Map<String, Integer> versions;
 
     public VersionVector() {

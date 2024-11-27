@@ -23,7 +23,7 @@ public class FormulaEditor {
         ASTNode ast = parser.parse(input);
         VersionVector versionVector = new VersionVector(new HashMap<String, Integer>() {{
             put(instanceId, 1);
-        }}  );
+        }});
         Formula formula = new Formula(id, ast, versionVector);
         workbook.addFormula(formula);
         return formula.toString();
