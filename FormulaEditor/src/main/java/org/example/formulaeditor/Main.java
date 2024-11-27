@@ -11,9 +11,12 @@ public class Main {
     public static void main(String[] args) throws Exception {
         Scanner scanner = new Scanner(System.in);
 
+        String instanceId = "instance1";
+        String instanceId2 = "instance2";
+
         // Create two editors
-        FormulaEditor editor1 = new FormulaEditor();
-        FormulaEditor editor2 = new FormulaEditor();
+        FormulaEditor editor1 = new FormulaEditor(instanceId);
+        FormulaEditor editor2 = new FormulaEditor(instanceId2);
 
 
         // Add formulas to editor1's workbook
