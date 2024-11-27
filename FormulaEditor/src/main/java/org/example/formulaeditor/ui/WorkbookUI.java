@@ -88,7 +88,7 @@ public class WorkbookUI extends BorderPane {
         tableView.setItems(data);
         this.setCenter(tableView);
 
-        // header section and input field
+        // Header section and input field
         headerLabel = new Label("Collaborative Formula Editor");
         headerLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
@@ -113,7 +113,7 @@ public class WorkbookUI extends BorderPane {
 
         this.setTop(topSection);
         this.setCenter(tableView);
-        // Add the CSS stylesheet to the root node
+        // Use tableview.css for CSS styles
         this.getStylesheets().add(getClass().getResource("/tableview.css").toExternalForm());
 
 
