@@ -49,10 +49,10 @@ public class FormulaTest {
     @Test
     public void testCellCreation() {
         Parser parser = new Parser();
-        ASTNode ast = parser.parse("A4");
+        ASTNode ast = parser.parse("A3");
         String id = "A4";
         Formula formula = new Formula(id, ast);
-        Assertions.assertEquals("A4", formula.toString());
+        Assertions.assertEquals("A3", formula.toString());
         Assertions.assertEquals("A4", formula.getId());
     }
 
