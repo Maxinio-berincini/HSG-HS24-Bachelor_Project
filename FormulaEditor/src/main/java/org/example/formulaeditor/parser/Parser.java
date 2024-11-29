@@ -104,7 +104,7 @@ public class Parser {
     private Optional<ASTNode> parseNameOrFunc() {
         if (cursor >= tokens.length) return Optional.empty();
         String name = tokens[cursor];
-        if (!name.matches("^[a-zA-Z_][a-zA-Z0-9_.]+$")) return Optional.empty();
+        if (!name.matches("^[a-zA-Z0-9_][a-zA-Z0-9_.]*$")) return Optional.empty();
         cursor++;
         for (BasicFunction fun : BasicFunction.values()) {
             if (fun.toString().equalsIgnoreCase(name)) {

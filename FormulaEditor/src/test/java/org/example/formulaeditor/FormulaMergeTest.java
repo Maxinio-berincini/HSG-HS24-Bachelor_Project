@@ -103,14 +103,46 @@ public class FormulaMergeTest {
         Assertions.assertEquals("MIN(D1:D16)", mergeResult.toString());
     }
 
-    // TODO check that 30apple and apple30 are registered as strings
-    @Disabled
     @Test
     public void oddString() {
         Formula formula1 = createFormula("80");
         Formula formula2 = createFormula("30apple30");
         mergeResult = crdtMerge.merge(formula1, formula2);
         Assertions.assertEquals("80", mergeResult.toString());
+    }
+
+    @Test
+    public void oddString2() {
+        Formula formula1 = createFormula("apple");
+        Formula formula2 = createFormula("apple30");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("apple30", mergeResult.toString());
+    }
+
+    @Test
+    public void oddString3() {
+        Formula formula1 = createFormula("apple");
+        Formula formula2 = createFormula("30apple");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("30apple", mergeResult.toString());
+    }
+
+    @Test
+    public void oddString4() {
+        Formula formula1 = createFormula("1");
+        Formula formula2 = createFormula("30apple");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("1", mergeResult.toString());
+    }
+
+    @Disabled
+    // TODO See if spaces can be allowed in strings
+    @Test
+    public void stringWithSpaces() {
+        Formula formula1 = createFormula("1");
+        Formula formula2 = createFormula("30 apples");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("1", mergeResult.toString());
     }
 
     @Test
@@ -429,7 +461,6 @@ public class FormulaMergeTest {
     }
 
     @Test
-    // TODO do we want binaryop or cell range to have priority? currently binaryop does, but my noted have it the other way around?
     public void cellRangeAndBinaryOp() {
         Formula formula1 = createFormula("A1:A3");
         Formula formula2 = createFormula("A4-17");
