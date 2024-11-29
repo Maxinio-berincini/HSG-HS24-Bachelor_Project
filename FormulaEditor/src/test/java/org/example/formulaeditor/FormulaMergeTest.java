@@ -27,17 +27,6 @@ public class FormulaMergeTest {
         return new Formula("A1", parser.parse(expression));
     }
 
-    @Disabled
-    @Test
-    // TODO implement vectors for this
-    // Checks that if only one user edited a cell before a sync, that their changes are chosen
-    public void onlyOneUserEditsCell() {
-        Formula formula1 = createFormula("17");
-        Formula formula2 = createFormula("");
-        mergeResult = crdtMerge.merge(formula1, formula2);
-        Assertions.assertEquals("17", mergeResult.toString());
-    }
-
     @Test
     // TODO take a look at and discuss this
     public void errorInEntry() {
@@ -45,6 +34,14 @@ public class FormulaMergeTest {
         Formula formula2 = createFormula("17=15");
         mergeResult = crdtMerge.merge(formula1, formula2);
         Assertions.assertEquals("(17=15)", mergeResult.toString());
+    }
+
+    @Test
+    public void spaces() {
+        Formula formula1 = createFormula(" apple");
+        Formula formula2 = createFormula(" apple    ");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("apple", mergeResult.toString());
     }
 
     @Test
@@ -468,7 +465,6 @@ public class FormulaMergeTest {
         Assertions.assertEquals("(A4-17)", mergeResult.toString());
     }
 
-
     @Test
     public void functionCallAndBoolean() {
         Formula formula1 = createFormula("MIN(A1:A3)");
@@ -485,34 +481,36 @@ public class FormulaMergeTest {
         Assertions.assertEquals("(10-3)", mergeResult.toString());
     }
 
-    @Disabled
     @Test
-    // TODO WE NEED TO COME UP WITH THE ARBITRARY RULING HERE
     public void differentFunctions() {
         Formula formula1 = createFormula("MIN(A1:A3)");
         Formula formula2 = createFormula("MAX(A1:A3)");
         mergeResult = crdtMerge.merge(formula1, formula2);
-        Assertions.assertEquals("XXXXXXX", mergeResult.toString());
+        Assertions.assertEquals("MAX(A1:A3)", mergeResult.toString());
     }
 
-    @Disabled
     @Test
-    // TODO WE NEED TO COME UP WITH THE ARBITRARY RULING HERE
     public void differentFunctions2() {
         Formula formula1 = createFormula("SUM(A1:A3)");
         Formula formula2 = createFormula("MAX(A1:A3)");
         mergeResult = crdtMerge.merge(formula1, formula2);
-        Assertions.assertEquals("XXXXXXX", mergeResult.toString());
+        Assertions.assertEquals("MAX(A1:A3)", mergeResult.toString());
     }
 
-    @Disabled
     @Test
-    // TODO WE NEED TO COME UP WITH THE ARBITRARY RULING HERE
     public void differentFunctions3() {
-        Formula formula1 = createFormula("PRODUCT(A1:A3)");
+        Formula formula1 = createFormula("PRODUCT(A1:A9)");
         Formula formula2 = createFormula("MIN(A1:A3)");
         mergeResult = crdtMerge.merge(formula1, formula2);
-        Assertions.assertEquals("XXXXXXX", mergeResult.toString());
+        Assertions.assertEquals("MIN(A1:A9)", mergeResult.toString());
+    }
+
+    @Test
+    public void differentFunctions4() {
+        Formula formula1 = createFormula("NOT(10+4)");
+        Formula formula2 = createFormula("IF(5*3)");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("IF((10*4))", mergeResult.toString());
     }
 
     @Test
