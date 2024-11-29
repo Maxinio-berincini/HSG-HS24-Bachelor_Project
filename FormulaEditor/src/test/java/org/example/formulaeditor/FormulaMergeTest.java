@@ -27,6 +27,26 @@ public class FormulaMergeTest {
         return new Formula("A1", parser.parse(expression));
     }
 
+    @Disabled
+    @Test
+    // TODO implement vectors for this
+    // Checks that if only one user edited a cell before a sync, that their changes are chosen
+    public void onlyOneUserEditsCell() {
+        Formula formula1 = createFormula("17");
+        Formula formula2 = createFormula("");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("17", mergeResult.toString());
+    }
+
+    @Test
+    // TODO take a look at and discuss this
+    public void errorInEntry() {
+        Formula formula1 = createFormula("17");
+        Formula formula2 = createFormula("17=15");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("(17=15)", mergeResult.toString());
+    }
+
     @Test
     public void singleSum() {
         Formula formula1 = createFormula("SUM(5,2)");
@@ -55,6 +75,40 @@ public class FormulaMergeTest {
     public void numberAndString() {
         Formula formula1 = createFormula("80");
         Formula formula2 = createFormula("apple");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("80", mergeResult.toString());
+    }
+
+    @Test
+    public void numberAndCellrange() {
+        Formula formula1 = createFormula("80");
+        Formula formula2 = createFormula("A1:C3");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("A1:C3", mergeResult.toString());
+    }
+
+    @Test
+    public void stringAndCellrange() {
+        Formula formula1 = createFormula("apple");
+        Formula formula2 = createFormula("A1:C3");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("A1:C3", mergeResult.toString());
+    }
+
+    @Test
+    public void functionCallAndCellrange() {
+        Formula formula1 = createFormula("MIN(D1:D16)");
+        Formula formula2 = createFormula("A1:C3");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("MIN(D1:D16)", mergeResult.toString());
+    }
+
+    // TODO check that 30apple and apple30 are registered as strings
+    @Disabled
+    @Test
+    public void oddString() {
+        Formula formula1 = createFormula("80");
+        Formula formula2 = createFormula("30apple30");
         mergeResult = crdtMerge.merge(formula1, formula2);
         Assertions.assertEquals("80", mergeResult.toString());
     }
@@ -107,6 +161,14 @@ public class FormulaMergeTest {
         Formula formula2 = createFormula("A1:B17");
         mergeResult = crdtMerge.merge(formula1, formula2);
         Assertions.assertEquals("C5:C10", mergeResult.toString());
+    }
+
+    @Test
+    public void cellReferenceAndCellRange() {
+        Formula formula1 = createFormula("C10");
+        Formula formula2 = createFormula("A1:B17");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("A1:B17", mergeResult.toString());
     }
 
     @Test
@@ -188,7 +250,7 @@ public class FormulaMergeTest {
     @Test
     public void functionCallAndBinaryOperation() {
         Formula formula1 = createFormula("MIN(A1:A5)");
-        Formula formula2 = createFormula("17*A5");
+        Formula formula2 = createFormula("17+A5");
         mergeResult = crdtMerge.merge(formula1, formula2);
         Assertions.assertEquals("MIN(A1:A5)", mergeResult.toString());
     }
@@ -213,9 +275,9 @@ public class FormulaMergeTest {
     @Test
     public void cellReferenceAndBinaryOperation() {
         Formula formula1 = createFormula("A6");
-        Formula formula2 = createFormula("17*3+4");
+        Formula formula2 = createFormula("A5*3+4");
         mergeResult = crdtMerge.merge(formula1, formula2);
-        Assertions.assertEquals("((17*3)+4)", mergeResult.toString());
+        Assertions.assertEquals("((A5*3)+4)", mergeResult.toString());
     }
 
     @Test
@@ -245,11 +307,60 @@ public class FormulaMergeTest {
     }
 
     @Test
+    public void BinaryOpAndNumber() {
+        Formula formula1 = createFormula("20");
+        Formula formula2 = createFormula("17*10");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("(17*10)", mergeResult.toString());
+    }
+
+    @Test
+    public void BinaryOpAndString() {
+        Formula formula1 = createFormula("apple");
+        Formula formula2 = createFormula("17*10");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("(17*10)", mergeResult.toString());
+    }
+
+    @Test
+    public void CellReferences1() {
+        Formula formula1 = createFormula("A5");
+        Formula formula2 = createFormula("A7");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("A7", mergeResult.toString());
+    }
+
+    @Test
+    public void CellReferences2() {
+        Formula formula1 = createFormula("A5");
+        Formula formula2 = createFormula("B1");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("B1", mergeResult.toString());
+    }
+
+    @Test
+    // Just to check that identical objects merge correctly
+    public void sameCellReferences() {
+        Formula formula1 = createFormula("A1");
+        Formula formula2 = createFormula("A1");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("A1", mergeResult.toString());
+    }
+
+    @Test
     public void numberAndCellReference() {
         Formula formula1 = createFormula("A5");
         Formula formula2 = createFormula("3");
         mergeResult = crdtMerge.merge(formula1, formula2);
         Assertions.assertEquals("A5", mergeResult.toString());
+    }
+
+    @Test
+    public void functionAndCellReference() {
+        Formula formula1 = createFormula("A7");
+        Formula formula2 = createFormula("MIN(A1:A5)");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("MIN(A1:A5)", mergeResult.toString());
     }
 
     @Test
@@ -318,6 +429,16 @@ public class FormulaMergeTest {
     }
 
     @Test
+    // TODO do we want binaryop or cell range to have priority? currently binaryop does, but my noted have it the other way around?
+    public void cellRangeAndBinaryOp() {
+        Formula formula1 = createFormula("A1:A3");
+        Formula formula2 = createFormula("A4-17");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("(A4-17)", mergeResult.toString());
+    }
+
+
+    @Test
     public void functionCallAndBoolean() {
         Formula formula1 = createFormula("MIN(A1:A3)");
         Formula formula2 = createFormula("true");
@@ -331,6 +452,44 @@ public class FormulaMergeTest {
         Formula formula2 = createFormula("true");
         mergeResult = crdtMerge.merge(formula1, formula2);
         Assertions.assertEquals("(10-3)", mergeResult.toString());
+    }
+
+    @Disabled
+    @Test
+    // TODO WE NEED TO COME UP WITH THE ARBITRARY RULING HERE
+    public void differentFunctions() {
+        Formula formula1 = createFormula("MIN(A1:A3)");
+        Formula formula2 = createFormula("MAX(A1:A3)");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("XXXXXXX", mergeResult.toString());
+    }
+
+    @Disabled
+    @Test
+    // TODO WE NEED TO COME UP WITH THE ARBITRARY RULING HERE
+    public void differentFunctions2() {
+        Formula formula1 = createFormula("SUM(A1:A3)");
+        Formula formula2 = createFormula("MAX(A1:A3)");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("XXXXXXX", mergeResult.toString());
+    }
+
+    @Disabled
+    @Test
+    // TODO WE NEED TO COME UP WITH THE ARBITRARY RULING HERE
+    public void differentFunctions3() {
+        Formula formula1 = createFormula("PRODUCT(A1:A3)");
+        Formula formula2 = createFormula("MIN(A1:A3)");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("XXXXXXX", mergeResult.toString());
+    }
+
+    @Test
+    public void functionsWithRangeVersusCellReference() {
+        Formula formula1 = createFormula("MIN(A7)");
+        Formula formula2 = createFormula("MIN(A1:A3)");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("MIN(A1:A3)", mergeResult.toString());
     }
 
 }
