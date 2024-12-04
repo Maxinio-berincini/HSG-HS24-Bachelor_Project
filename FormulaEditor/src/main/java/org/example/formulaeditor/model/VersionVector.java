@@ -1,67 +1,71 @@
 package org.example.formulaeditor.model;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 public class VersionVector {
     private final Map<String, Integer> versions;
+    private boolean edited;
 
     public VersionVector() {
         versions = new HashMap<>();
+        edited = false;
     }
 
     public VersionVector(Map<String, Integer> versions) {
         this.versions = new HashMap<>(versions);
+        edited = false;
+    }
+    public void increment(String instanceId) {
+        if (!edited) {
+            versions.put(instanceId, getVersion(instanceId) + 1);
+            edited = true;
+        }
     }
 
-    public void increment(String InstanceId) {
-        versions.put(InstanceId, getVersion(InstanceId) + 1);
+    public int getVersion(String instanceId) {
+        return versions.getOrDefault(instanceId, 0);
     }
-
-    public int getVersion(String InstanceId) {
-        return versions.getOrDefault(InstanceId, 0);
-    }
-
     public Map<String, Integer> getVersions() {
         return versions;
     }
-
     public Set<String> getInstances() {
         return versions.keySet();
     }
-
     public boolean isNewerVersion(VersionVector other) {
-        //TODO add logic to check if this is a newer version
-        /*
         boolean atLeastOneGreater = false;
-        Set<String> allInstances = new HashSet<>();
-        allInstances.addAll(this.getInstances());
+
+        Set<String> allInstances = new HashSet<>(this.getInstances());
         allInstances.addAll(other.getInstances());
 
-        for (String nodeId : allInstances) {
-            int thisVersion = getVersion(nodeId);
-            int otherVersion = other.getVersion(nodeId);
+        for (String instanceId : allInstances) {
+            int thisVersion = this.getVersion(instanceId);
+            int otherVersion = other.getVersion(instanceId);
 
             if (thisVersion < otherVersion) {
                 return false;
-            }
-            if (thisVersion > otherVersion) {
+            } else if (thisVersion > otherVersion) {
                 atLeastOneGreater = true;
             }
         }
         return atLeastOneGreater;
-
-         */
-        return false;
     }
-
     public void merge(VersionVector other) {
-        for (String InstanceId : other.getInstances()) {
-            int otherVersion = other.getVersion(InstanceId);
-            int thisVersion = getVersion(InstanceId);
-            versions.put(InstanceId, Math.max(thisVersion, otherVersion));
+        // create vector with all components
+        Set<String> allInstances = new HashSet<>();
+        allInstances.addAll(this.getInstances());
+        allInstances.addAll(other.getInstances());
+
+        // choose maximum value of each component
+        for (String instanceId : allInstances) {
+            int thisVersion = this.getVersion(instanceId);
+            int otherVersion = other.getVersion(instanceId);
+            versions.put(instanceId, Math.max(thisVersion, otherVersion));
         }
+
+        edited = false;
     }
 
     @Override
