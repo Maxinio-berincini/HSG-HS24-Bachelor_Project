@@ -17,20 +17,21 @@ public class CRDTRules {
     public Formula applyRules(Formula local, Formula remote) {
         //TODO merge logic
 
+        // Merge version vectors
+        VersionVector mergedVersionVector = new VersionVector(local.getVersionVector().getVersions());
+        mergedVersionVector.merge(remote.getVersionVector());
+
+        System.out.println("local Version Vector: " + local.getVersionVector() + " remote Version Vector: " + remote.getVersionVector() + " merged Version Vector: " + mergedVersionVector);
+
         // version verctor logic
         if (local.getVersionVector().isNewerVersion(remote.getVersionVector())) {
-            return local;
+            return new Formula(local.getId(), local.getAst(), mergedVersionVector);
         } else if (remote.getVersionVector().isNewerVersion(local.getVersionVector())) {
-            return remote;
+            return new Formula(remote.getId(), remote.getAst(), mergedVersionVector);
         } else {
 
             ASTNode mergedAST = mergeASTNodes(local.getAst(), remote.getAst());
 
-            // Merge version vectors
-            VersionVector mergedVersionVector = new VersionVector(local.getVersionVector().getVersions());
-            mergedVersionVector.merge(remote.getVersionVector());
-
-            System.out.println("local Version Vector: " + local.getVersionVector() + " remote Version Vector: " + remote.getVersionVector() + " merged Version Vector: " + mergedVersionVector);
             // Create a new Formula with the merged AST and new version vector
             return new Formula(local.getId(), mergedAST, mergedVersionVector);
         }
