@@ -18,6 +18,7 @@ public class VersionVector {
         this.versions = new HashMap<>(versions);
         edited = false;
     }
+
     public void increment(String instanceId) {
         if (!edited) {
             versions.put(instanceId, getVersion(instanceId) + 1);
@@ -28,12 +29,15 @@ public class VersionVector {
     public int getVersion(String instanceId) {
         return versions.getOrDefault(instanceId, 0);
     }
+
     public Map<String, Integer> getVersions() {
         return versions;
     }
+
     public Set<String> getInstances() {
         return versions.keySet();
     }
+
     public boolean isNewerVersion(VersionVector other) {
         boolean atLeastOneGreater = false;
 
@@ -52,6 +56,7 @@ public class VersionVector {
         }
         return atLeastOneGreater;
     }
+
     public void merge(VersionVector other) {
         // create vector with all components
         Set<String> allInstances = new HashSet<>();

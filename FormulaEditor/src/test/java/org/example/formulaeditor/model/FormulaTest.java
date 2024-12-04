@@ -11,6 +11,7 @@ import java.util.HashMap;
 public class FormulaTest {
     private static VersionVector versionVector;
     private static Parser parser;
+
     @BeforeAll
     public static void setup() {
         System.out.println("Starting Formula tests");
@@ -19,6 +20,7 @@ public class FormulaTest {
             put("Instance1", 0);
         }});
     }
+
     @Test
     public void testFormulaCreation() {
         ASTNode ast = parser.parse("SUM(A1:A10)");
