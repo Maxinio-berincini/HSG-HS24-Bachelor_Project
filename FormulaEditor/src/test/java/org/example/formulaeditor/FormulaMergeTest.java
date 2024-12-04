@@ -26,7 +26,7 @@ public class FormulaMergeTest {
         CRDTRules crdtRules = new CRDTRules();
         crdtMerge = new CRDTMerge(crdtRules);
         versionVector = new VersionVector(new HashMap<String, Integer>() {{
-            put("Instance1", 1);
+            put("Instance1", 0);
         }});
     }
 

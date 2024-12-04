@@ -83,5 +83,8 @@ public class VersionVectorMergeTest {
 
         //check if the merged version vector is newer than the one from Instance B
         Assertions.assertTrue(mergedVersionVector.isNewerVersion(versionVectorB));
+
+        //check merged version vector
+        Assertions.assertEquals("{InstanceA=1, InstanceB=0}", mergedVersionVector.toString());
     }
 }
