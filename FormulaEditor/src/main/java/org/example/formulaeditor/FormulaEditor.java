@@ -22,7 +22,7 @@ public class FormulaEditor {
     public String addFormula(String id, String input) throws Exception {
         ASTNode ast = parser.parse(input);
         VersionVector versionVector = new VersionVector(new HashMap<String, Integer>() {{
-            put(instanceId, 1);
+            put(instanceId, 0);
         }});
         Formula formula = new Formula(id, ast, versionVector);
         workbook.addFormula(formula);
