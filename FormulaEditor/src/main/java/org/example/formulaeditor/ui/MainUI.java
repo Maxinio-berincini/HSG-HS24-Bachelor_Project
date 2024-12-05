@@ -8,7 +8,10 @@ import org.example.formulaeditor.FormulaEditor;
 public class MainUI extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FormulaEditor formulaEditor = new FormulaEditor();
+        final String instanceId = "Instance1";
+        final String instanceId2 = "Instance2";
+
+        FormulaEditor formulaEditor = new FormulaEditor(instanceId);
         formulaEditor.addFormula("A1", "11 + 6");
         WorkbookUI workbookUI = new WorkbookUI(formulaEditor);
 
@@ -18,7 +21,7 @@ public class MainUI extends Application {
         primaryStage.show();
 
         Stage secondStage = new Stage();
-        FormulaEditor formulaEditor2 = new FormulaEditor();
+        FormulaEditor formulaEditor2 = new FormulaEditor(instanceId2);
         formulaEditor2.addFormula("A1", "10 + 15");
         WorkbookUI workbookUI2 = new WorkbookUI(formulaEditor2);
 

@@ -3,17 +3,21 @@ package org.example.formulaeditor;
 import org.example.formulaeditor.crdt.CRDTMerge;
 import org.example.formulaeditor.crdt.CRDTRules;
 import org.example.formulaeditor.model.Formula;
+import org.example.formulaeditor.model.VersionVector;
 import org.example.formulaeditor.parser.Parser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
+
 public class FormulaMergeTest {
 
     private static Parser parser;
     private static CRDTMerge crdtMerge;
     private Formula mergeResult;
+    private static VersionVector versionVector;
 
     @BeforeAll
     public static void setUp() {
@@ -21,10 +25,13 @@ public class FormulaMergeTest {
         parser = new Parser();
         CRDTRules crdtRules = new CRDTRules();
         crdtMerge = new CRDTMerge(crdtRules);
+        versionVector = new VersionVector(new HashMap<String, Integer>() {{
+            put("Instance1", 0);
+        }});
     }
 
     private Formula createFormula(String expression) {
-        return new Formula("A1", parser.parse(expression));
+        return new Formula("A1", parser.parse(expression), versionVector);
     }
 
     @Test

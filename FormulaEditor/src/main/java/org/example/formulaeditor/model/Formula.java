@@ -5,10 +5,12 @@ import org.example.formulaeditor.parser.ast.ASTNode;
 public class Formula {
     String id;
     private final ASTNode ast;
+    private VersionVector versionVector;
 
-    public Formula(String id, ASTNode ast) {
+    public Formula(String id, ASTNode ast, VersionVector versionVector) {
         this.id = id;
         this.ast = ast;
+        this.versionVector = versionVector;
     }
 
     public String getId() {
@@ -17,6 +19,14 @@ public class Formula {
 
     public ASTNode getAst() {
         return ast;
+    }
+
+    public VersionVector getVersionVector() {
+        return versionVector;
+    }
+
+    public void setVersionVector(VersionVector versionVector) {
+        this.versionVector = versionVector;
     }
 
     @Override

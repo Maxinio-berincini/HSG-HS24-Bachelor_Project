@@ -11,7 +11,10 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.stage.WindowEvent;
 import javafx.util.converter.DefaultStringConverter;
 import org.example.formulaeditor.FormulaEditor;
@@ -88,7 +91,7 @@ public class WorkbookUI extends BorderPane {
         tableView.setItems(data);
         this.setCenter(tableView);
 
-        // Header section and input field
+        // header section and input field
         headerLabel = new Label("Collaborative Formula Editor");
         headerLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
