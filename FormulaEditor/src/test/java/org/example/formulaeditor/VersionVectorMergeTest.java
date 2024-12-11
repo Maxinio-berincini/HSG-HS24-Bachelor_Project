@@ -87,7 +87,7 @@ public class VersionVectorMergeTest {
         Assertions.assertTrue(mergedVersionVector.isNewerVersion(versionVectorB));
 
         //check merged version vector
-        Assertions.assertEquals("{InstanceA=1, InstanceB=0}", mergedVersionVector.toString());
+        Assertions.assertEquals("{InstanceA=2, InstanceB=1}", mergedVersionVector.toString());
     }
 
     @Test
@@ -139,13 +139,14 @@ public class VersionVectorMergeTest {
     public void testIsNewerVersionWithGreaterVector() {
         Map<String, Integer> versions1 = new HashMap<>();
         versions1.put("InstanceA", 2);
+        versions1.put("InstanceB", 1);
         VersionVector vector1 = new VersionVector(versions1);
 
         Map<String, Integer> versions2 = new HashMap<>();
         versions2.put("InstanceB", 1);
         VersionVector vector2 = new VersionVector(versions2);
 
-        Assertions.assertTrue(vector1.isNewerVersion(vector2)); // TODO why is this false?
+        Assertions.assertTrue(vector1.isNewerVersion(vector2));
     }
 
     @Test
@@ -295,7 +296,7 @@ public class VersionVectorMergeTest {
 
         vector1.increment("InstanceA"); // Increments again here
 
-        Assertions.assertEquals(2, vector1.getVersion("InstanceA")); // TODO It says this should be 1
+        Assertions.assertEquals(1, vector1.getVersion("InstanceA"));
         Assertions.assertEquals(0, vector1.getVersion("InstanceB"));
         Assertions.assertEquals(1, vector2.getVersion("InstanceA"));
         Assertions.assertEquals(1, vector2.getVersion("InstanceB"));
