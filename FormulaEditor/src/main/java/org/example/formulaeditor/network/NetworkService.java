@@ -205,4 +205,6 @@ public class NetworkService extends WebSocketClient {
     public void setLocalWorkbook(Workbook localWorkbook) {
         this.localWorkbook = localWorkbook;
     }
+
+    public List<String> getKnownPeers(){return knownPeers;}
 }
