@@ -23,6 +23,7 @@ public class NetworkService extends WebSocketClient {
     private Workbook localWorkbook;
     private List<String> knownPeers = new ArrayList<>();
     private int pendingRequests = 0;
+    private boolean pullInProgress = false;
 
     public NetworkService(String serverUri, String peerId, Workbook localWorkbook) throws Exception {
         super(new URI(serverUri));
@@ -89,12 +90,14 @@ public class NetworkService extends WebSocketClient {
                         if (pendingRequests > 0) {
                             pendingRequests--;
                             System.out.println("pendingRequests: " + pendingRequests);
-                        }
 
-                        //broadcast on final pull
-                        if (pendingRequests == 0) {
-                            broadcastLocalWorkbook();
+                            //broadcast on final pull
+                            if (pendingRequests == 0 && pullInProgress) {
+                                broadcastLocalWorkbook();
+                                pullInProgress = false;
+                            }
                         }
+                        //if not pull in progress, maybe a broadcast --> avoid broadcasting loop
                     }
                 }
                 default -> System.out.println("Unknown message type: " + type);
@@ -133,6 +136,7 @@ public class NetworkService extends WebSocketClient {
     }
 
     public void pullFromAllAndBroadcast() {
+        pullInProgress = true;
         discoverPeers();
 
         //wait for updated peer list before pulling
@@ -147,20 +151,18 @@ public class NetworkService extends WebSocketClient {
     }
 
     private void requestFromAll() {
-        System.out.println("Pulling from all known peers: " + knownPeers);
+        System.out.println("Pulling from peers: " + knownPeers);
         pendingRequests = 0;
 
-        //request workbook from each peer
         for (String p : knownPeers) {
             if (!p.equals(peerId)) {
                 requestWorkbookFrom(p);
                 pendingRequests++;
             }
         }
-
-        if (pendingRequests == 0) {
-            //broadcast final workbook
+        if (pendingRequests == 0 && pullInProgress) {
             broadcastLocalWorkbook();
+            pullInProgress = false;
         }
     }
 
