@@ -8,7 +8,8 @@ public class SyncManager {
     private static SyncManager instance = null;
 
 
-    private SyncManager(){}
+    private SyncManager() {
+    }
 
 
     public static synchronized SyncManager getInstance() {

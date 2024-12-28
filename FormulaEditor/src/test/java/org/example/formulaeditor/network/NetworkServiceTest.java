@@ -48,11 +48,11 @@ public class NetworkServiceTest {
     @Test
     void testOnMessage_requestWorkbook() throws Exception {
         String jsonMsg = """
-        {
-          "type": "REQUEST_WORKBOOK",
-          "fromPeer": "peerB"
-        }
-        """;
+                {
+                  "type": "REQUEST_WORKBOOK",
+                  "fromPeer": "peerB"
+                }
+                """;
 
         //simulate receiving JSON
         networkServiceSpy.onMessage(jsonMsg);
@@ -81,10 +81,10 @@ public class NetworkServiceTest {
     @Test
     void testOnMessage_registerAck_discoversPeers() throws Exception {
         String jsonMsg = """
-        {
-          "type": "REGISTER_ACK"
-        }
-        """;
+                {
+                  "type": "REGISTER_ACK"
+                }
+                """;
 
         //simulate ack message
         networkServiceSpy.onMessage(jsonMsg);
@@ -96,11 +96,11 @@ public class NetworkServiceTest {
     @Test
     void testOnMessage_peersList_updatesKnownPeers() throws Exception {
         String jsonMsg = """
-        {
-          "type": "PEERS_LIST",
-          "peers": ["peerB", "peerC"]
-        }
-        """;
+                {
+                  "type": "PEERS_LIST",
+                  "peers": ["peerB", "peerC"]
+                }
+                """;
 
         //simulate peer list message
         networkServiceSpy.onMessage(jsonMsg);

@@ -174,6 +174,7 @@ public class WorkbookUI extends BorderPane {
         selectedCells.addListener((ListChangeListener<TablePosition>) change -> updateFormulaInputField());
 
     }
+
     private void handleChangeServer() {
         String newServer = serverUrlField.getText().trim();
         if (!newServer.isEmpty()) {

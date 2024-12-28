@@ -54,7 +54,8 @@ public class NetworkService extends WebSocketClient {
     public void onMessage(String message) {
         System.out.println("[NetworkService] Message received: " + message);
         try {
-            Map<String, Object> msg = GSON.fromJson(message, new TypeToken<Map<String, Object>>(){}.getType());
+            Map<String, Object> msg = GSON.fromJson(message, new TypeToken<Map<String, Object>>() {
+            }.getType());
             String type = (String) msg.get("type");
 
             switch (type) {
@@ -216,9 +217,15 @@ public class NetworkService extends WebSocketClient {
         this.localWorkbook = localWorkbook;
     }
 
-    public String getPeerId(){return peerId;}
+    public String getPeerId() {
+        return peerId;
+    }
 
-    public String getUri(){return super.uri.toString();}
+    public String getUri() {
+        return super.uri.toString();
+    }
 
-    public List<String> getKnownPeers(){return knownPeers;}
+    public List<String> getKnownPeers() {
+        return knownPeers;
+    }
 }
