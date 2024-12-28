@@ -15,15 +15,18 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.converter.DefaultStringConverter;
 import org.example.formulaeditor.FormulaEditor;
 import org.example.formulaeditor.model.Formula;
 import org.example.formulaeditor.model.Workbook;
+import org.example.formulaeditor.network.NetworkService;
 import org.example.formulaeditor.network.SyncManager;
 
 public class WorkbookUI extends BorderPane {
     private final FormulaEditor formulaEditor;
+    private final NetworkService networkService;
     private final TableView<ObservableList<StringProperty>> tableView;
     private TextField formulaInputField;
     private Label headerLabel;
@@ -33,13 +36,21 @@ public class WorkbookUI extends BorderPane {
     private final int numRows = 6;
     private final int numColumns = 6;
 
-    public WorkbookUI(FormulaEditor formulaEditor) {
+    public WorkbookUI(FormulaEditor formulaEditor, String InstanceId, String serverUrl, Stage stage) throws Exception {
         this.formulaEditor = formulaEditor;
+        this.networkService = new NetworkService(serverUrl, InstanceId, formulaEditor.getWorkbook());
+        this.networkService.connect();
+        this.networkService.waitForConnection();
+
+        stage.setOnCloseRequest(e -> {
+            System.out.println("[WorkbookUI] Window closing. Disconnecting...");
+            networkService.close();
+        });
+
+
         this.tableView = new TableView<>();
         initializeUI();
 
-        // Register the workbook with SyncManager
-        SyncManager.getInstance().registerWorkbook(formulaEditor.getWorkbook());
 
         // Add listener to observe changes in the formulas map
         formulaEditor.getWorkbook().getFormulasMap().addListener((MapChangeListener<String, Formula>) change -> {
@@ -292,13 +303,8 @@ public class WorkbookUI extends BorderPane {
 
     private void handleSyncButton() {
         System.out.println("Sync button clicked");
-        SyncManager.getInstance().synchronize(formulaEditor.getWorkbook());
+       networkService.sendWorkbookToPeer(formulaEditor.getWorkbook(), "BROADCAST");
         // TODO implement synchronization
-    }
-
-    public void setOnCloseRequest(EventHandler<WindowEvent> eventHandler) {
-        // Unregister the workbook from SyncManager
-        SyncManager.getInstance().unregisterWorkbook(formulaEditor.getWorkbook());
     }
 
 
