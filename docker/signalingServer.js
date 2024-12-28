@@ -1,3 +1,17 @@
+const originalLog = console.log;
+const originalWarn = console.warn;
+const originalError = console.error;
+
+console.log = (...args) => {
+    originalLog(`[${new Date().toISOString()}]`, ...args);
+};
+console.warn = (...args) => {
+    originalWarn(`[${new Date().toISOString()}] WARN:`, ...args);
+};
+console.error = (...args) => {
+    originalError(`[${new Date().toISOString()}] ERROR:`, ...args);
+};
+
 const WebSocket = require('ws');
 
 //websocket on port 2425
@@ -32,16 +46,34 @@ wss.on('connection', (ws) => {
 
             if (msg.type === 'SIGNAL') {
                 //forward message
-                const target = peers[msg.targetPeerId];
-                if (target) {
-                    console.log(`Relaying signal from ${msg.peerId} to ${msg.targetPeerId}`);
-                    target.send(JSON.stringify({
-                        type: 'SIGNAL',
-                        from: msg.peerId,
-                        data: msg.data,
-                    }));
+                const fromPeer = msg.peerId;
+                const targetPeerId = msg.targetPeerId;
+
+                //send to all on broadcast
+                if (targetPeerId === 'BROADCAST') {
+                    console.log(`Broadcasting signal from ${fromPeer} to all peers`);
+                    Object.entries(peers).forEach(([peerId, socket]) => {
+                        if (peerId !== fromPeer) {
+                            socket.send(JSON.stringify({
+                                type: 'SIGNAL',
+                                from: fromPeer,
+                                data: msg.data,
+                            }));
+                        }
+                    });
                 } else {
-                    console.warn(`Target peer not found: ${msg.targetPeerId}`);
+                    //send to single peer
+                    const target = peers[targetPeerId];
+                    if (target) {
+                        console.log(`Relaying signal from ${fromPeer} to ${targetPeerId}`);
+                        target.send(JSON.stringify({
+                            type: 'SIGNAL',
+                            from: fromPeer,
+                            data: msg.data,
+                        }));
+                    } else {
+                        console.warn(`Target peer not found: ${targetPeerId}`);
+                    }
                 }
             }
         } catch (err) {
