@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 
 public class NetworkService extends WebSocketClient {
@@ -24,12 +25,17 @@ public class NetworkService extends WebSocketClient {
     private List<String> knownPeers = new ArrayList<>();
     private int pendingRequests = 0;
     private boolean pullInProgress = false;
+    private Consumer<Integer> peerListListener;
 
     public NetworkService(String serverUri, String peerId, Workbook localWorkbook) throws Exception {
         super(new URI(serverUri));
         this.peerId = peerId;
         this.localWorkbook = localWorkbook;
         this.syncManager = SyncManager.getInstance();
+    }
+
+    public void setPeerListListener(Consumer<Integer> listener) {
+        this.peerListListener = listener;
     }
 
     @Override
@@ -61,6 +67,10 @@ public class NetworkService extends WebSocketClient {
                     knownPeers.clear();
                     knownPeers.addAll(peersList);
                     System.out.println("[NetworkService] Available peers: " + knownPeers);
+
+                    if (peerListListener != null) {
+                        peerListListener.accept(knownPeers.size());
+                    }
                 }
                 case "REQUEST_WORKBOOK" -> {
                     //send local workbook on pull request
@@ -205,6 +215,10 @@ public class NetworkService extends WebSocketClient {
     public void setLocalWorkbook(Workbook localWorkbook) {
         this.localWorkbook = localWorkbook;
     }
+
+    public String getPeerId(){return peerId;}
+
+    public String getUri(){return super.uri.toString();}
 
     public List<String> getKnownPeers(){return knownPeers;}
 }
