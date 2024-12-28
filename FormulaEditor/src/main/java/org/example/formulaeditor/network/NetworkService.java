@@ -9,6 +9,7 @@ import org.java_websocket.enums.ReadyState;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -20,6 +21,8 @@ public class NetworkService extends WebSocketClient {
     private final String peerId;
     private final SyncManager syncManager;
     private Workbook localWorkbook;
+    private List<String> knownPeers = new ArrayList<>();
+    private int pendingRequests = 0;
 
     public NetworkService(String serverUri, String peerId, Workbook localWorkbook) throws Exception {
         super(new URI(serverUri));
@@ -49,13 +52,22 @@ public class NetworkService extends WebSocketClient {
 
             switch (type) {
                 case "REGISTER_ACK" -> {
-                    System.out.println("Registered successfully on server.");
-                    // discover peers
+                    System.out.println("Registered on server. Discovering peers...");
                     discoverPeers();
                 }
                 case "PEERS_LIST" -> {
                     List<String> peersList = (List<String>) msg.get("peers");
-                    System.out.println("Available peers: " + peersList);
+                    knownPeers.clear();
+                    knownPeers.addAll(peersList);
+                    System.out.println("Available peers: " + knownPeers);
+                }
+                case "REQUEST_WORKBOOK" -> {
+                    //send local workbook on pull request
+                    String fromPeer = (String) msg.get("fromPeer");
+                    System.out.println("Received REQUEST_WORKBOOK from " + fromPeer);
+
+                    //signal local workbook
+                    sendWorkbookToPeer(localWorkbook, fromPeer);
                 }
                 case "SIGNAL" -> {
                     // receiving workbook as json
@@ -69,10 +81,20 @@ public class NetworkService extends WebSocketClient {
                         // dto to workbook
                         Workbook remoteWorkbook = NetworkSerializer.fromSyncDTO(incomingDTO, new Parser());
 
-                        // merge
-                        System.out.println("Merging remote workbook...");
+                        System.out.println("Merging remote workbook into local...");
                         syncManager.merge(localWorkbook, remoteWorkbook);
-                        System.out.println("Merge complete. Local workbook updated.");
+                        System.out.println("Merge complete.");
+
+                        //on multiple pulls
+                        if (pendingRequests > 0) {
+                            pendingRequests--;
+                            System.out.println("pendingRequests: " + pendingRequests);
+                        }
+
+                        //broadcast on final pull
+                        if (pendingRequests == 0) {
+                            broadcastLocalWorkbook();
+                        }
                     }
                 }
                 default -> System.out.println("Unknown message type: " + type);
@@ -95,13 +117,57 @@ public class NetworkService extends WebSocketClient {
 
 
     public void discoverPeers() {
-        String discoverMsg = GSON.toJson(Map.of(
-                "type", "DISCOVER",
-                "peerId", peerId
-        ));
+        String discoverMsg = GSON.toJson(Map.of("type", "DISCOVER", "peerId", peerId));
         send(discoverMsg);
     }
 
+
+    public void requestWorkbookFrom(String targetPeerId) {
+        Map<String, Object> reqMsg = Map.of(
+                "type", "REQUEST_WORKBOOK",
+                "peerId", peerId,
+                "targetPeerId", targetPeerId
+        );
+        send(GSON.toJson(reqMsg));
+        System.out.println("REQUEST_WORKBOOK sent to " + targetPeerId);
+    }
+
+    public void pullFromAllAndBroadcast() {
+        discoverPeers();
+
+        //wait for updated peer list before pulling
+        new Thread(() -> {
+            try {
+                Thread.sleep(1000);
+                requestFromAll();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    private void requestFromAll() {
+        System.out.println("Pulling from all known peers: " + knownPeers);
+        pendingRequests = 0;
+
+        //request workbook from each peer
+        for (String p : knownPeers) {
+            if (!p.equals(peerId)) {
+                requestWorkbookFrom(p);
+                pendingRequests++;
+            }
+        }
+
+        if (pendingRequests == 0) {
+            //broadcast final workbook
+            broadcastLocalWorkbook();
+        }
+    }
+
+    private void broadcastLocalWorkbook() {
+        System.out.println("Broadcasting final merged local workbook");
+        sendWorkbookToPeer(localWorkbook, "BROADCAST");
+    }
 
     public void sendWorkbookToPeer(Workbook workbook, String targetPeerId) {
         //convert to DTO
@@ -137,18 +203,4 @@ public class NetworkService extends WebSocketClient {
     public void setLocalWorkbook(Workbook localWorkbook) {
         this.localWorkbook = localWorkbook;
     }
-
-    public void reconnectTo(String newServerUri) throws Exception {
-        // close current connection
-        this.close();
-
-        // new instance with updated server
-        NetworkService newService = new NetworkService(newServerUri, this.peerId, this.localWorkbook);
-
-        // connect to new server
-        newService.connect();
-        newService.waitForConnection();
-        System.out.println("Reconnected to new server: " + newServerUri);
-    }
-
 }
