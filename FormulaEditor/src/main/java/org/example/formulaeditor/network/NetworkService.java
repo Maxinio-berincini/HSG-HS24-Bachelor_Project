@@ -34,7 +34,7 @@ public class NetworkService extends WebSocketClient {
 
     @Override
     public void onOpen(ServerHandshake handshakedata) {
-        System.out.println("WebSocket connected. Registering peer: " + peerId);
+        System.out.println("[NetworkService] WebSocket connected. Registering peer: " + peerId);
 
         // register on signaling server
         String registerMsg = GSON.toJson(Map.of(
@@ -46,26 +46,26 @@ public class NetworkService extends WebSocketClient {
 
     @Override
     public void onMessage(String message) {
-        System.out.println("Message received: " + message);
+        System.out.println("[NetworkService] Message received: " + message);
         try {
             Map<String, Object> msg = GSON.fromJson(message, new TypeToken<Map<String, Object>>(){}.getType());
             String type = (String) msg.get("type");
 
             switch (type) {
                 case "REGISTER_ACK" -> {
-                    System.out.println("Registered on server. Discovering peers...");
+                    System.out.println("[NetworkService] Registered on server. Discovering peers...");
                     discoverPeers();
                 }
                 case "PEERS_LIST" -> {
                     List<String> peersList = (List<String>) msg.get("peers");
                     knownPeers.clear();
                     knownPeers.addAll(peersList);
-                    System.out.println("Available peers: " + knownPeers);
+                    System.out.println("[NetworkService] Available peers: " + knownPeers);
                 }
                 case "REQUEST_WORKBOOK" -> {
                     //send local workbook on pull request
                     String fromPeer = (String) msg.get("fromPeer");
-                    System.out.println("Received REQUEST_WORKBOOK from " + fromPeer);
+                    System.out.println("[NetworkService] Received REQUEST_WORKBOOK from " + fromPeer);
 
                     //signal local workbook
                     sendWorkbookToPeer(localWorkbook, fromPeer);
@@ -82,14 +82,14 @@ public class NetworkService extends WebSocketClient {
                         // dto to workbook
                         Workbook remoteWorkbook = NetworkSerializer.fromSyncDTO(incomingDTO, new Parser());
 
-                        System.out.println("Merging remote workbook into local...");
+                        System.out.println("[NetworkService] Merging remote workbook into local...");
                         syncManager.merge(localWorkbook, remoteWorkbook);
-                        System.out.println("Merge complete.");
+                        System.out.println("[NetworkService] Merge complete.");
 
                         //on multiple pulls
                         if (pendingRequests > 0) {
                             pendingRequests--;
-                            System.out.println("pendingRequests: " + pendingRequests);
+                            System.out.println("[NetworkService] pendingRequests: " + pendingRequests);
 
                             //broadcast on final pull
                             if (pendingRequests == 0 && pullInProgress) {
@@ -100,7 +100,7 @@ public class NetworkService extends WebSocketClient {
                         //if not pull in progress, maybe a broadcast --> avoid broadcasting loop
                     }
                 }
-                default -> System.out.println("Unknown message type: " + type);
+                default -> System.out.println("[NetworkService] Unknown message type: " + type);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -109,12 +109,12 @@ public class NetworkService extends WebSocketClient {
 
     @Override
     public void onClose(int code, String reason, boolean remote) {
-        System.out.println("WebSocket closed. Code: " + code + ", Reason: " + reason);
+        System.out.println("[NetworkService] WebSocket closed. Code: " + code + ", Reason: " + reason);
     }
 
     @Override
     public void onError(Exception ex) {
-        System.err.println("WebSocket error: " + ex.getMessage());
+        System.err.println("[NetworkService] WebSocket error: " + ex.getMessage());
         ex.printStackTrace();
     }
 
@@ -132,7 +132,7 @@ public class NetworkService extends WebSocketClient {
                 "targetPeerId", targetPeerId
         );
         send(GSON.toJson(reqMsg));
-        System.out.println("REQUEST_WORKBOOK sent to " + targetPeerId);
+        System.out.println("[NetworkService] REQUEST_WORKBOOK sent to " + targetPeerId);
     }
 
     public void pullFromAllAndBroadcast() {
@@ -151,7 +151,7 @@ public class NetworkService extends WebSocketClient {
     }
 
     private void requestFromAll() {
-        System.out.println("Pulling from peers: " + knownPeers);
+        System.out.println("[NetworkService] Pulling from peers: " + knownPeers);
         pendingRequests = 0;
 
         for (String p : knownPeers) {
@@ -167,7 +167,7 @@ public class NetworkService extends WebSocketClient {
     }
 
     private void broadcastLocalWorkbook() {
-        System.out.println("Broadcasting final merged local workbook");
+        System.out.println("[NetworkService] Broadcasting final merged local workbook");
         sendWorkbookToPeer(localWorkbook, "BROADCAST");
     }
 
@@ -185,14 +185,14 @@ public class NetworkService extends WebSocketClient {
         String signalMsgStr = GSON.toJson(signalMsg);
         send(signalMsgStr);
 
-        System.out.println("Sent workbook to peer: " + targetPeerId);
+        System.out.println("[NetworkService] Sent workbook to peer: " + targetPeerId);
     }
 
 
     public void waitForConnection() throws InterruptedException {
         int retries = 0;
         while (getReadyState() != ReadyState.OPEN && retries < 5) {
-            System.out.println("Waiting for WebSocket to open...");
+            System.out.println("[NetworkService] Waiting for WebSocket to open...");
             TimeUnit.SECONDS.sleep(1);
             retries++;
         }
