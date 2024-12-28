@@ -44,6 +44,19 @@ wss.on('connection', (ws) => {
                 console.log(`Sent peer list to ${msg.peerId}:`, availablePeers);
             }
 
+            if (msg.type === 'REQUEST_WORKBOOK') {
+                const fromPeer = msg.peerId;
+                const targetPeerId = msg.targetPeerId;
+                if (peers[targetPeerId]) {
+                    console.log(`Forwarding REQUEST_WORKBOOK from ${fromPeer} to ${targetPeerId}`);
+                    peers[targetPeerId].send(JSON.stringify({
+                        type: 'REQUEST_WORKBOOK',
+                        fromPeer: fromPeer
+                    }));
+                } else {
+                    console.warn(`Target peer not found for REQUEST_WORKBOOK: ${targetPeerId}`);
+                }
+            }
             if (msg.type === 'SIGNAL') {
                 //forward message
                 const fromPeer = msg.peerId;
