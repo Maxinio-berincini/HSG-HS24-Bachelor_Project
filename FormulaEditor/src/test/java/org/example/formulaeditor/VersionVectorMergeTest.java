@@ -8,7 +8,6 @@ import org.example.formulaeditor.model.VersionVector;
 import org.example.formulaeditor.parser.Parser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;

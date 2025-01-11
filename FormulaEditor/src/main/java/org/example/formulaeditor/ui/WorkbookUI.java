@@ -7,7 +7,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -15,31 +14,46 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.stage.WindowEvent;
+import javafx.stage.Stage;
 import javafx.util.converter.DefaultStringConverter;
 import org.example.formulaeditor.FormulaEditor;
 import org.example.formulaeditor.model.Formula;
 import org.example.formulaeditor.model.Workbook;
-import org.example.formulaeditor.network.SyncManager;
+import org.example.formulaeditor.network.NetworkService;
 
 public class WorkbookUI extends BorderPane {
     private final FormulaEditor formulaEditor;
+    private NetworkService networkService;
     private final TableView<ObservableList<StringProperty>> tableView;
     private TextField formulaInputField;
     private Label headerLabel;
+    private Label peersLabel;
+    private TextField serverUrlField;
+    private Button connectButton;
     private Button syncButton;
+    private Button scanForPeersButton;
     private String selectedCellId;
 
-    private final int numRows = 6;
-    private final int numColumns = 6;
+    private final int numRows = 26;
+    private final int numColumns = 26;
 
-    public WorkbookUI(FormulaEditor formulaEditor) {
+    public WorkbookUI(FormulaEditor formulaEditor, String InstanceId, String serverUrl, Stage stage) throws Exception {
         this.formulaEditor = formulaEditor;
+        this.networkService = new NetworkService(serverUrl, InstanceId, formulaEditor.getWorkbook());
+        this.networkService.connect();
+        this.networkService.waitForConnection();
+
+        stage.setOnCloseRequest(e -> {
+            System.out.println("[WorkbookUI] Window closing. Disconnecting...");
+            networkService.close();
+        });
+
+
         this.tableView = new TableView<>();
         initializeUI();
 
-        // Register the workbook with SyncManager
-        SyncManager.getInstance().registerWorkbook(formulaEditor.getWorkbook());
+        // Let the UI know about peer-list updates
+        networkService.setPeerListListener(this::updatePeerCount);
 
         // Add listener to observe changes in the formulas map
         formulaEditor.getWorkbook().getFormulasMap().addListener((MapChangeListener<String, Formula>) change -> {
@@ -50,7 +64,13 @@ public class WorkbookUI extends BorderPane {
             }
             refreshTableView();
         });
+    }
 
+
+    private void updatePeerCount(int peerCount) {
+        Platform.runLater(() -> {
+            peersLabel.setText("Peers: " + peerCount);
+        });
     }
 
     private void initializeUI() {
@@ -95,24 +115,53 @@ public class WorkbookUI extends BorderPane {
         headerLabel = new Label("Collaborative Formula Editor");
         headerLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
+        scanForPeersButton = new Button("Scan");
+        scanForPeersButton.setOnAction(event -> networkService.discoverPeers());
+
+        // Peer count label
+        peersLabel = new Label("Peers: ");
+
         syncButton = new Button("Sync");
         syncButton.getStyleClass().add("sync-button");
         syncButton.setOnAction(event -> handleSyncButton());
 
         HBox titleBar = new HBox(10);
-        titleBar.getChildren().addAll(headerLabel, syncButton);
-
+        titleBar.getChildren().addAll(headerLabel);
         titleBar.setAlignment(Pos.CENTER);
         HBox.setHgrow(headerLabel, Priority.ALWAYS);
 
+        HBox syncBar = new HBox(10);
+        syncBar.getChildren().addAll(peersLabel, scanForPeersButton, syncButton);
+        syncBar.setAlignment(Pos.CENTER);
+
+        // Text field for new server
+        serverUrlField = new TextField();
+        serverUrlField.setText(networkService.getUri());
+        serverUrlField.setPrefWidth(250);
+
+        // Connect button
+        connectButton = new Button("Connect");
+        connectButton.setOnAction(e -> {
+            try {
+                handleChangeServer();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
+        HBox serverBox = new HBox(5, new Label("Server URL:"), serverUrlField, connectButton);
+        serverBox.setAlignment(Pos.CENTER);
+
+        // Formula input field
         formulaInputField = new TextField();
         formulaInputField.setPromptText("Select a cell");
 
         // Handle input field edits
         formulaInputField.setOnAction(event -> handleFormulaInputFieldEdit());
 
-        VBox topSection = new VBox();
-        topSection.getChildren().addAll(titleBar, formulaInputField);
+        // Compose top layout
+        VBox topSection = new VBox(5);
+        topSection.getChildren().addAll(titleBar, serverBox, syncBar, formulaInputField);
 
         this.setTop(topSection);
         this.setCenter(tableView);
@@ -125,6 +174,30 @@ public class WorkbookUI extends BorderPane {
         selectedCells.addListener((ListChangeListener<TablePosition>) change -> updateFormulaInputField());
 
     }
+
+    private void handleChangeServer() {
+        String newServer = serverUrlField.getText().trim();
+        if (!newServer.isEmpty()) {
+            try {
+                networkService.close();
+
+                networkService = new NetworkService(newServer, networkService.getPeerId(),
+                        formulaEditor.getWorkbook());
+                networkService.connect();
+                networkService.waitForConnection();
+
+                networkService.setPeerListListener(this::updatePeerCount);
+
+                System.out.println("[WorkbookUI] Reconnected to " + newServer);
+
+                networkService.discoverPeers();
+            } catch (Exception e) {
+                e.printStackTrace();
+                showErrorDialog("Connection Error", "Failed to connect to new server:\n" + e.getMessage());
+            }
+        }
+    }
+
 
     private TableColumn<ObservableList<StringProperty>, String> getColumn(int colIndex) {
         final int colIdx = colIndex;
@@ -292,13 +365,8 @@ public class WorkbookUI extends BorderPane {
 
     private void handleSyncButton() {
         System.out.println("Sync button clicked");
-        SyncManager.getInstance().synchronize(formulaEditor.getWorkbook());
+        networkService.pullFromAllAndBroadcast();
         // TODO implement synchronization
-    }
-
-    public void setOnCloseRequest(EventHandler<WindowEvent> eventHandler) {
-        // Unregister the workbook from SyncManager
-        SyncManager.getInstance().unregisterWorkbook(formulaEditor.getWorkbook());
     }
 
 
