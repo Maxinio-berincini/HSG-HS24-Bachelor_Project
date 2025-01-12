@@ -242,7 +242,6 @@ public class FormulaMergeTest {
         Assertions.assertEquals("(MIN(A1:A3)/4)", mergeResult.toString());
     }
 
-    //TODO Append in the middle keep in mind for later tests
     @Test
     public void longerAppendsAndNumbers() {
         Formula formula1 = createFormula("MIN(A1:A3)/2-1");
@@ -526,6 +525,194 @@ public class FormulaMergeTest {
         Formula formula2 = createFormula("MIN(A1:A3)");
         mergeResult = crdtMerge.merge(formula1, formula2);
         Assertions.assertEquals("MIN(A1:A3)", mergeResult.toString());
+    }
+
+    @Test
+    public void complexMerge1() {
+        Formula formula1 = createFormula("SUM(A1:A10)+MIN(B2:B5)");
+        Formula formula2 = createFormula("PRODUCT(A5:B10)-false");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("(SUM(A5:B10)+MIN(B2:B5))", mergeResult.toString());
+    }
+
+    @Test
+    public void complexMerge2() {
+        Formula formula1 = createFormula("A10:B20 / 15");
+        Formula formula2 = createFormula("C5-(true*2)");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("(A10:B20/(true*2))", mergeResult.toString());
+    }
+
+    @Test
+    public void complexMerge3() {
+        Formula formula1 = createFormula("biggestApple+123");
+        Formula formula2 = createFormula("MIN(A1:A4)+pear");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("(MIN(A1:A4)+123)", mergeResult.toString());
+    }
+
+    @Test
+    public void complexMerge4() {
+        Formula formula1 = createFormula("NOT(10+4)+IF(A1<4)");
+        Formula formula2 = createFormula("false*(2*8)");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("(NOT((10+4))*IF((A1<4)))", mergeResult.toString());
+    }
+
+    @Test
+    public void complexMerge5() {
+        Formula formula1 = createFormula("(A1+15)*B3-22");
+        Formula formula2 = createFormula("C10/5+true");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("(((A1+15)*B3)+22)", mergeResult.toString());
+    }
+
+    @Test
+    public void complexMerge6() {
+        Formula formula1 = createFormula("IF(MAX(A1:A2),MIN(B2:B3))-4");
+        Formula formula2 = createFormula("apple+NOT(5*4)");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("(IF(MAX(A1:A2), MIN(B2:B3))+NOT((5*4)))", mergeResult.toString());
+    }
+
+    @Test
+    public void complexMerge7() {
+        Formula formula1 = createFormula("(bananaSplit+100)/true - MIN(D1:D5)");
+        Formula formula2 = createFormula("A5:A10 + berryCup * 50 - false");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("(((bananaSplit+100)/(berryCup*50))-MIN(D1:D5))", mergeResult.toString());
+    }
+
+    @Test
+    public void complexMerge7Variation() {
+        Formula formula1 = createFormula("bananaSplit + 100 / true - MIN(D1:D5)");
+        Formula formula2 = createFormula("A5:A10 + berryCup * 50 - false");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("((A5:A10+(100*50))-MIN(D1:D5))", mergeResult.toString());
+    }
+
+    @Disabled
+    @Test
+    // TODO issue with parsing "A1>10"
+    public void complexMerge8() {
+        Formula formula1 = createFormula("IF(A1>10, IF(B2<5, true, false), C3*7)");
+        Formula formula2 = createFormula("IF(A1>0, IF(D4=5, false, true), (E5/E6)-1)");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("XXXXXXXXXXXXXXXXXXXXXXXX", mergeResult.toString());
+    }
+
+    @Test
+    public void complexMerge9() {
+        Formula formula1 = createFormula("NOT(SUM(A1:A5)-MIN(B1:B2))+true"); // Parsed as follows: (NOT((SUM(A1:A5)-MIN(B1:B2)))+true)
+        Formula formula2 = createFormula("PRODUCT(A1:B5)/false - MAX(X1:X2)"); // Parsed as follows: ((PRODUCT(A1:B5)/false)-MAX(X1:X2))
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("((PRODUCT((SUM(A1:A5)-MIN(B1:B2)))/false)+MAX(X1:X2))", mergeResult.toString());
+    }
+
+    @Test
+    public void complexMerge9Variation() {
+        Formula formula1 = createFormula("SUM(A1:A5)-MIN(B1:B2)");
+        Formula formula2 = createFormula("PRODUCT(A1:B5)/false");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("(SUM(A1:B5)/MIN(B1:B2))", mergeResult.toString());
+    }
+
+    @Test
+    public void complexMerge9Variation2() {
+        Formula formula1 = createFormula("NOT(SUM(A1:A5)-MIN(B1:B2))");
+        Formula formula2 = createFormula("PRODUCT(A1:B5)/false");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("(PRODUCT((SUM(A1:A5)-MIN(B1:B2)))/false)", mergeResult.toString());
+    }
+
+    @Test
+    // TODO in formula 2 after merging "A5>8" becomes "A58"
+    public void complexMerge10() {
+        Formula formula1 = createFormula("(15 + A10)*grapes - IF(true, false)");
+        Formula formula2 = createFormula("AND(A5>8,peach) + OR(B1, B2, 100)");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("(AND(A58, peach)+IF(B1, B2, 100))", mergeResult.toString());
+    }
+
+
+    @Test
+    public void complexMerge11() {
+        Formula formula1 = createFormula("(((A1+20)-B2)*C3)/((D4-5)+(E5*6))");
+        Formula formula2 = createFormula("(Z1-2)+(Y2*(X3+10))/(W4-33)");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("((((A1+20)-B2)*C3)/((Y2*(X3+10))/(W4*33)))", mergeResult.toString());
+    }
+
+    @Test
+    public void complexMerge12() {
+        Formula formula1 = createFormula("NOT(MAX(A1:A2)-15) + (Q5/7)");
+        Formula formula2 = createFormula("SUM(NEGATE10, MIN(A7:B7)) - finalTest");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("(SUM((MAX(A1:A2)-15), MIN(A7:B7))+(Q5/7))", mergeResult.toString());
+    }
+
+    @Test
+    public void complexMerge13() {
+        Formula formula1 = createFormula("apple-banana+(true*3)");
+        Formula formula2 = createFormula("peach + false - (A1/10)");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("((apple+false)+(A1*10))", mergeResult.toString());
+    }
+
+    @Test
+    public void complexMerge14() {
+        Formula formula1 = createFormula("MIN(A1:A2)*MAX(B1:B2) /AND(true,9)");
+        Formula formula2 = createFormula("SUM(10,15) +IF(A5,false)");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("((MIN(A1:A2, 15)*MAX(B1:B2))/IF(A5, 9))", mergeResult.toString());
+    }
+
+    @Test
+    public void complexMerge15() {
+        Formula formula1 = createFormula("false - MIN(A10:B12) + 30");
+        Formula formula2 = createFormula("IF(A1=3, SUM(1,5), true)");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("IF((A1=3), SUM(1, 5), true)", mergeResult.toString());
+    }
+
+    @Test
+    public void complexMerge15Variation1() {
+        Formula formula1 = createFormula("false - MIN(A10:B12) + 30");
+        Formula formula2 = createFormula("IF(A1=3, SUM(1,5), true)*10");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("(IF((A1=3), SUM(1, 5), true)*30)", mergeResult.toString());
+    }
+
+    @Test
+    public void complexMerge16() {
+        Formula formula1 = createFormula("mango * 25 + A5 + B3");
+        Formula formula2 = createFormula("peach * 13 + C6 - 100");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("(((mango*25)+C6)+B3)", mergeResult.toString());
+    }
+
+    @Test
+    public void complexMerge17() {
+        Formula formula1 = createFormula("true*(A1+cat)");
+        Formula formula2 = createFormula("false+(B5*dog)");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("(true*(B5*cat))", mergeResult.toString());
+    }
+
+    @Test
+    public void complexMerge18() {
+        Formula formula1 = createFormula("(A2+A5)*B7-(C10/2)");
+        Formula formula2 = createFormula("((A1*B3)/(C4+5))-D1");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("(((A2*B3)*(C4+5))-(C10/2))", mergeResult.toString());
+    }
+
+    @Test
+    public void complexMerge19() {
+        Formula formula1 = createFormula("(((A1+B2)-C3)+D4) *E5");
+        Formula formula2 = createFormula("((Z1*Z2)/(Z3-Z4)) + IF(Z5=10,Z6,Z7)");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("((((A1+B2)*Z2)/(Z3-Z4))*IF((Z5=10), Z6, Z7))", mergeResult.toString());
     }
 
 }
