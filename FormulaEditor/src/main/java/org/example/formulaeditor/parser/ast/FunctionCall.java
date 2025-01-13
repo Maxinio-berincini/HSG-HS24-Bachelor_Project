@@ -5,7 +5,7 @@ import org.example.formulaeditor.parser.ASTNodeVisitor;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class FunctionCall implements ASTNode {
+public class FunctionCall extends AbstractASTNode {
     public final BasicFunction functionName;
     public final List<ASTNode> args;
 

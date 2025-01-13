@@ -2,7 +2,7 @@ package org.example.formulaeditor.parser.ast;
 
 import org.example.formulaeditor.parser.ASTNodeVisitor;
 
-public class Boolean implements ASTNode {
+public class Boolean extends AbstractASTNode {
     public final boolean value;
 
     public Boolean(boolean value) {

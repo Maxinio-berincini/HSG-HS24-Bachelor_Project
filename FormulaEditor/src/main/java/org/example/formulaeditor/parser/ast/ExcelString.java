@@ -2,7 +2,7 @@ package org.example.formulaeditor.parser.ast;
 
 import org.example.formulaeditor.parser.ASTNodeVisitor;
 
-public class ExcelString implements ASTNode {
+public class ExcelString extends AbstractASTNode {
     public final String value;
 
     public ExcelString(String value) {

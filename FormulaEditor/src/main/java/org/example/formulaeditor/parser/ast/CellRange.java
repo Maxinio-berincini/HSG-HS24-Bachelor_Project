@@ -2,7 +2,7 @@ package org.example.formulaeditor.parser.ast;
 
 import org.example.formulaeditor.parser.ASTNodeVisitor;
 
-public class CellRange implements ASTNode {
+public class CellRange extends AbstractASTNode {
     public final Cell start;
     public final Cell end;
 
