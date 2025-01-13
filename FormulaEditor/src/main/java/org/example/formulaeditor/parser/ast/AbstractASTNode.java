@@ -3,6 +3,10 @@ package org.example.formulaeditor.parser.ast;
 public abstract class AbstractASTNode implements ASTNode {
     private int revisionCount;
 
+    public AbstractASTNode() {
+        this.revisionCount = 1;
+    }
+
     public int getRevisionCount() {
         return revisionCount;
     }
