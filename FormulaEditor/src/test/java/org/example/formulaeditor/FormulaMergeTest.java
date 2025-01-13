@@ -591,14 +591,12 @@ public class FormulaMergeTest {
         Assertions.assertEquals("((A5:A10+(100*50))-MIN(D1:D5))", mergeResult.toString());
     }
 
-    @Disabled
     @Test
-    // TODO issue with parsing "A1>10"
     public void complexMerge8() {
-        Formula formula1 = createFormula("IF(A1>10, IF(B2<5, true, false), C3*7)");
-        Formula formula2 = createFormula("IF(A1>0, IF(D4=5, false, true), (E5/E6)-1)");
+        Formula formula1 = createFormula("IF(A1 > 10, IF(B2 < 5, true, false), C3*7)");
+        Formula formula2 = createFormula("IF(A1 > 0, IF(D4 = 5, false, true), (E5/E6)-1)");
         mergeResult = crdtMerge.merge(formula1, formula2);
-        Assertions.assertEquals("XXXXXXXXXXXXXXXXXXXXXXXX", mergeResult.toString());
+        Assertions.assertEquals("IF((A1>10), IF((D4<=5), true, true), ((E5/E6)*7))", mergeResult.toString());
     }
 
     @Test
@@ -626,12 +624,11 @@ public class FormulaMergeTest {
     }
 
     @Test
-    // TODO in formula 2 after merging "A5>8" becomes "A58"
     public void complexMerge10() {
         Formula formula1 = createFormula("(15 + A10)*grapes - IF(true, false)");
-        Formula formula2 = createFormula("AND(A5>8,peach) + OR(B1, B2, 100)");
+        Formula formula2 = createFormula("AND(A5 > 8,peach) + OR(B1, B2, 100)");
         mergeResult = crdtMerge.merge(formula1, formula2);
-        Assertions.assertEquals("(AND(A58, peach)+IF(B1, B2, 100))", mergeResult.toString());
+        Assertions.assertEquals("(AND((A5>8), peach)+IF(B1, B2, 100))", mergeResult.toString());
     }
 
 
