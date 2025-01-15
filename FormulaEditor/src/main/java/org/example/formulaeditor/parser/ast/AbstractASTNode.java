@@ -2,7 +2,7 @@ package org.example.formulaeditor.parser.ast;
 
 public abstract class AbstractASTNode implements ASTNode {
     private int revisionCount;
-    private int priority;
+    private final int priority;
 
     public AbstractASTNode(int priority) {
         this.revisionCount = 1;
@@ -12,7 +12,10 @@ public abstract class AbstractASTNode implements ASTNode {
     public int getRevisionCount() {
         return revisionCount;
     }
-    public int getPriority(){return priority;}
+
+    public int getPriority() {
+        return priority;
+    }
 
     public void setRevisionCount(int revisionCount) {
         this.revisionCount = revisionCount;

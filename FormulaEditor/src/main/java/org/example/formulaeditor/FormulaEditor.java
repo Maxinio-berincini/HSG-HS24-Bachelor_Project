@@ -4,8 +4,8 @@ import org.example.formulaeditor.model.Formula;
 import org.example.formulaeditor.model.VersionVector;
 import org.example.formulaeditor.model.Workbook;
 import org.example.formulaeditor.parser.Parser;
-import org.example.formulaeditor.parser.ast.ASTNode;
 import org.example.formulaeditor.parser.ast.ASTDifference;
+import org.example.formulaeditor.parser.ast.ASTNode;
 import org.example.formulaeditor.parser.ast.ASTPrinter;
 
 import java.util.HashMap;

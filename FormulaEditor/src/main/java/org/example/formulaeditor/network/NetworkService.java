@@ -21,7 +21,7 @@ public class NetworkService extends WebSocketClient {
     private final String peerId;
     private final SyncManager syncManager;
     private Workbook localWorkbook;
-    private List<String> knownPeers = new ArrayList<>();
+    private final List<String> knownPeers = new ArrayList<>();
     private int pendingRequests = 0;
     private boolean pullInProgress = false;
     private Consumer<Integer> peerListListener;

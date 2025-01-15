@@ -25,7 +25,7 @@ public class ASTPrinter {
         for (ASTNode node : allNodes) {
             int revCount = ((AbstractASTNode) node).getRevisionCount();
             String nodeType = node.getClass().getSimpleName();
-            System.out.println("  " + nodeType +" '"+ node +"' -> " + revCount);
+            System.out.println("  " + nodeType + " '" + node + "' -> " + revCount);
         }
     }
 
