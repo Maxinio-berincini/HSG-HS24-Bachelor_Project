@@ -3,7 +3,6 @@ package org.example.formulaeditor.network;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.example.formulaeditor.model.Workbook;
-import org.example.formulaeditor.parser.Parser;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.enums.ReadyState;
 import org.java_websocket.handshake.ServerHandshake;
@@ -91,7 +90,7 @@ public class NetworkService extends WebSocketClient {
                         WorkbookSyncDTO incomingDTO = GSON.fromJson(workbookJson, WorkbookSyncDTO.class);
 
                         // dto to workbook
-                        Workbook remoteWorkbook = NetworkSerializer.fromSyncDTO(incomingDTO, new Parser());
+                        Workbook remoteWorkbook = NetworkSerializer.fromSyncDTO(incomingDTO);
 
                         System.out.println("[NetworkService] Merging remote workbook into local...");
                         syncManager.merge(localWorkbook, remoteWorkbook);

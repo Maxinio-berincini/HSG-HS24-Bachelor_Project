@@ -4,7 +4,7 @@ import java.util.Map;
 
 public class FormulaSyncDTO {
     private String cellId;
-    private String formulaString;
+    private String serializedAstJson;
     private Map<String, Integer> versionVector;
 
     public FormulaSyncDTO() {
@@ -12,7 +12,7 @@ public class FormulaSyncDTO {
 
     public FormulaSyncDTO(String cellId, String formulaString, Map<String, Integer> versionVector) {
         this.cellId = cellId;
-        this.formulaString = formulaString;
+        this.serializedAstJson = formulaString;
         this.versionVector = versionVector;
     }
 
@@ -25,11 +25,11 @@ public class FormulaSyncDTO {
     }
 
     public String getFormulaString() {
-        return formulaString;
+        return serializedAstJson;
     }
 
     public void setFormulaString(String formulaString) {
-        this.formulaString = formulaString;
+        this.serializedAstJson = formulaString;
     }
 
     public Map<String, Integer> getVersionVector() {
