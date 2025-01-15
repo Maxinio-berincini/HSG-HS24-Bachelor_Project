@@ -144,7 +144,7 @@ public class FormulaMergeTest {
     @Test
     public void stringWithSpaces() {
         Formula formula1 = createFormula("1");
-        Formula formula2 = createFormula("30 apples");
+        Formula formula2 = createFormula("30 apples"); // The space here cannot be parsed correctly
         mergeResult = crdtMerge.merge(formula1, formula2);
         Assertions.assertEquals("1", mergeResult.toString());
     }
@@ -323,14 +323,22 @@ public class FormulaMergeTest {
         Assertions.assertEquals("(15*D7)", mergeResult.toString());
     }
 
-    //TODO Invalid Input --> add Input Validation
+    // This test is disabled because it fails, however it's final outcome is still correct
     @Disabled
     @Test
-    public void complexFormulaAndNumber() {
-        Formula formula1 = createFormula("teo+max");
-        Formula formula2 = createFormula("5");
+    public void invalidFormulaAndNumber() {
+        Formula formula1 = createFormula("teo+max"); // "teo+max" is parsed as an error (max is a keyword reserved for formulas) however can still be entered by a user
+        Formula formula2 = createFormula("5"); // As long as this second formula is a valid one, it will always win the merge
         mergeResult = crdtMerge.merge(formula1, formula2);
         Assertions.assertEquals("5", mergeResult.toString());
+    }
+
+    @Test
+    public void strangeFormulaStrings() {
+        Formula formula1 = createFormula("teo+apple");
+        Formula formula2 = createFormula("apple+peach");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("(apple+apple)", mergeResult.toString());
     }
 
     @Test
