@@ -312,7 +312,7 @@ public class CRDTRules {
         return new Negate(mergedInnerNode);
     }
 
-
+    //todo extract to abstract ast node
     private int getTypePriority(ASTNode node) {
         if (node instanceof FunctionCall) return 7;
         if (node instanceof Binary) return 6;
@@ -387,6 +387,26 @@ public class CRDTRules {
         } else if (remotePriority > localPriority) {
             return remote;
         } else {
+            return chooseByRevisionCount(local, remote);
+        }
+    }
+
+    private ASTNode chooseByRevisionCount(ASTNode local, ASTNode remote) {
+        AbstractASTNode localAbs = (AbstractASTNode) local;
+        AbstractASTNode remoteAbs = (AbstractASTNode) remote;
+
+        int localRevisionCount = localAbs.getRevisionCount();
+        int remoteRevisionCount = remoteAbs.getRevisionCount();
+        int maxRevisionCount = Math.max(localRevisionCount, remoteRevisionCount);
+
+        // choose node with higher revision count
+        if (localRevisionCount > remoteRevisionCount) {
+            return local;
+        } else if (localRevisionCount < remoteRevisionCount) {
+            return remote;
+        } else {
+            //default to local
+            localAbs.setRevisionCount(maxRevisionCount);
             return local;
         }
     }
