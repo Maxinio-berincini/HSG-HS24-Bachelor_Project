@@ -4,7 +4,9 @@ import org.example.formulaeditor.model.Formula;
 import org.example.formulaeditor.model.VersionVector;
 import org.example.formulaeditor.model.Workbook;
 import org.example.formulaeditor.parser.Parser;
+import org.example.formulaeditor.parser.ast.ASTDifference;
 import org.example.formulaeditor.parser.ast.ASTNode;
+import org.example.formulaeditor.parser.ast.ASTPrinter;
 
 import java.util.HashMap;
 
@@ -34,17 +36,35 @@ public class FormulaEditor {
         ASTNode ast = parser.parse(input);
         Formula existingFormula = workbook.getFormula(id);
 
-        VersionVector versionVector;
-        if (existingFormula != null) {
-            versionVector = existingFormula.getVersionVector();
-        } else {
-            versionVector = new VersionVector();
-        }
-        versionVector.increment(instanceId);
+        ASTPrinter.printFormulaDetails(existingFormula);
 
-        Formula formula = new Formula(id, ast, versionVector);
-        workbook.addFormula(formula);
-        return formula.toString();
+        VersionVector versionVector;
+        if (existingFormula == null) {
+            versionVector = new VersionVector();
+            versionVector.increment(instanceId);
+
+            Formula formula = new Formula(id, ast, versionVector);
+            workbook.addFormula(formula);
+            return formula.toString();
+        } else {
+            //merge node by node on update
+            ASTNode oldAST = existingFormula.getAst();
+            versionVector = existingFormula.getVersionVector();
+
+            ASTDifference differ = new ASTDifference();
+            ASTNode mergedAST = differ.mergeUpdatedAST(oldAST, ast);
+
+            versionVector.increment(instanceId);
+
+            Formula mergedFormula = new Formula(id, mergedAST, versionVector);
+
+            workbook.addFormula(mergedFormula);
+
+
+            ASTPrinter.printFormulaDetails(mergedFormula);
+
+            return mergedFormula.toString();
+        }
     }
 
     public void deleteFormula(String id) {

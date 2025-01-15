@@ -2,11 +2,12 @@ package org.example.formulaeditor.parser.ast;
 
 import org.example.formulaeditor.parser.ASTNodeVisitor;
 
-public class Cell implements ASTNode {
+public class Cell extends AbstractASTNode {
     public final String column;
     public final int row;
 
     public Cell(String column, int row) {
+        super(4);
         this.column = column;
         this.row = row;
     }

@@ -13,9 +13,7 @@ import java.util.List;
 
 public class CRDTRules {
 
-
     public Formula applyRules(Formula local, Formula remote) {
-        //TODO merge logic
 
         // Merge version vectors
         VersionVector mergedVersionVector = new VersionVector(local.getVersionVector().getVersions());
@@ -23,13 +21,12 @@ public class CRDTRules {
 
         System.out.println("local Version Vector: " + local.getVersionVector() + " remote Version Vector: " + remote.getVersionVector() + " merged Version Vector: " + mergedVersionVector);
 
-        // version verctor logic
+        // Version vector logic
         if (local.getVersionVector().isNewerVersion(remote.getVersionVector())) {
             return new Formula(local.getId(), local.getAst(), mergedVersionVector);
         } else if (remote.getVersionVector().isNewerVersion(local.getVersionVector())) {
             return new Formula(remote.getId(), remote.getAst(), mergedVersionVector);
         } else {
-
             ASTNode mergedAST = mergeASTNodes(local.getAst(), remote.getAst());
 
             // Create a new Formula with the merged AST and new version vector
@@ -53,21 +50,18 @@ public class CRDTRules {
                 mergedWorkbook.addFormula(localFormula);
             }
         }
-
         // Add formulas that are only in remote
         for (String id : remote.getFormulasMap().keySet()) {
             if (!local.containsFormula(id)) {
                 mergedWorkbook.addFormula(remote.getFormula(id));
             }
         }
-
         return mergedWorkbook;
     }
 
-
     // Merge two ASTNodes according to the CRDT rules
     public ASTNode mergeASTNodes(ASTNode local, ASTNode remote) {
-        // check if both nodes are of the same type
+        // Check if both nodes are of the same type
         if (local.getClass() != remote.getClass()) {
             System.out.println("Instance of: " + local + "is: " + local.getClass() + " and " + remote + "is: " + remote.getClass());
             // Handle type conflicts
@@ -108,7 +102,7 @@ public class CRDTRules {
     // Handle merging of FunctionCall nodes
     private FunctionCall mergeFunctionCall(FunctionCall local, FunctionCall remote) {
         // Merge arguments
-        // traverse the arguments and merge them
+        // Traverse the arguments and merge them
         if (local.functionName.equals(remote.functionName)) {
             List<ASTNode> mergedArguments = new ArrayList<>();
             int localSize = local.args.size();
@@ -129,7 +123,7 @@ public class CRDTRules {
 
             return new FunctionCall(local.functionName, mergedArguments);
         } else {
-            // hierarchy of functions
+            // Hierarchy of functions
             return mergeBasicFunction(local, remote);
         }
     }
@@ -155,8 +149,6 @@ public class CRDTRules {
                 // Default to local function
                 return mergeFunctionCall(new FunctionCall(localFunction, local.args), new FunctionCall(localFunction, remote.args));
             }
-
-
         }
     }
 
@@ -170,7 +162,7 @@ public class CRDTRules {
     // Rule for merging Binary Operators
     private BinaryOp mergeBinaryOp(BinaryOp localOp, BinaryOp remoteOp) {
         // Choose the operator with the lower precedence
-        // precedences: 0--> modulo, 1 --> pow, 2 --> multiply/divide, 3 --> add/subtract, 4 --> comparison operators
+        // Precedences: 0--> modulo, 1 --> pow, 2 --> multiply/divide, 3 --> add/subtract, 4 --> comparison operators
         if (localOp.precedence < remoteOp.precedence) {
             return localOp;
         } else if (localOp.precedence > remoteOp.precedence) {
@@ -212,7 +204,7 @@ public class CRDTRules {
     }
 
     private BinaryOp mergeComparisonOperators(BinaryOp localOp, BinaryOp remoteOp) {
-        //general not equal always loses
+        // General not equal always loses
         if (localOp == BinaryOp.NOT_EQUAL || remoteOp == BinaryOp.NOT_EQUAL) {
             if (localOp == BinaryOp.NOT_EQUAL) {
                 return remoteOp;
@@ -243,7 +235,6 @@ public class CRDTRules {
             }
         }
     }
-
 
     // Rule for merging strings: choose the longer string or the lexicographically lower string
     private ExcelString mergeExcelStrings(ExcelString local, ExcelString remote) {
@@ -312,19 +303,6 @@ public class CRDTRules {
         return new Negate(mergedInnerNode);
     }
 
-
-    private int getTypePriority(ASTNode node) {
-        if (node instanceof FunctionCall) return 7;
-        if (node instanceof Binary) return 6;
-        if (node instanceof CellRange) return 5;
-        if (node instanceof Cell) return 4;
-        if (node instanceof Number<?>) return 3;
-        if (node instanceof Boolean) return 2;
-        if (node instanceof ExcelString) return 1;
-        return 0; // Default priority for unknown types
-    }
-
-
     // Resolve type conflicts between different node types
     private ASTNode resolveTypeConflict(ASTNode local, ASTNode remote) {
         // Resolve conflicts for negate
@@ -332,8 +310,7 @@ public class CRDTRules {
             return remote;
         } else if (!(local instanceof Negate) && remote instanceof Negate) {
             return local;
-
-            // try merging binary node with other types, if compatible
+            // Try merging binary node with other types, if compatible
         } else if (isCompatible(local, remote)) {
             // Attempt to merge nodes
             return attemptMergeDifferentTypes(local, remote);
@@ -349,8 +326,7 @@ public class CRDTRules {
         if (local.getClass().equals(remote.getClass())) {
             return true;
         }
-
-        // merge binary with function call
+        // Merge binary with function call
         if (local instanceof Binary localBinary && remote instanceof FunctionCall) {
             return localBinary.left.getClass().equals(remote.getClass());
         }
@@ -365,11 +341,11 @@ public class CRDTRules {
         // Try to merge binary with function call
         if (local instanceof Binary localBinary && remote instanceof FunctionCall) {
             ASTNode mergedLeft = mergeASTNodes(localBinary.left, remote);
-            // reconstruct Binary with  merged left side
+            // Reconstruct Binary with  merged left side
             return new Binary(mergedLeft, localBinary.op, localBinary.right);
         } else if (local instanceof FunctionCall && remote instanceof Binary remoteBinary) {
             ASTNode mergedLeft = mergeASTNodes(local, remoteBinary.left);
-            // reconstruct Binary with merged left side
+            // Reconstruct Binary with merged left side
             return new Binary(mergedLeft, remoteBinary.op, remoteBinary.right);
         } else {
             // If we cannot merge, decide which node to prefer
@@ -379,14 +355,34 @@ public class CRDTRules {
     }
 
     private ASTNode choosePreferredNode(ASTNode local, ASTNode remote) {
-        int localPriority = getTypePriority(local);
-        int remotePriority = getTypePriority(remote);
+        int localPriority = ((AbstractASTNode) local).getPriority();
+        int remotePriority = ((AbstractASTNode) remote).getPriority();
 
         if (localPriority > remotePriority) {
             return local;
         } else if (remotePriority > localPriority) {
             return remote;
         } else {
+            return chooseByRevisionCount(local, remote);
+        }
+    }
+
+    private ASTNode chooseByRevisionCount(ASTNode local, ASTNode remote) {
+        AbstractASTNode localAbs = (AbstractASTNode) local;
+        AbstractASTNode remoteAbs = (AbstractASTNode) remote;
+
+        int localRevisionCount = localAbs.getRevisionCount();
+        int remoteRevisionCount = remoteAbs.getRevisionCount();
+        int maxRevisionCount = Math.max(localRevisionCount, remoteRevisionCount);
+
+        // Choose node with higher revision count
+        if (localRevisionCount > remoteRevisionCount) {
+            return local;
+        } else if (localRevisionCount < remoteRevisionCount) {
+            return remote;
+        } else {
+            // Default to local
+            localAbs.setRevisionCount(maxRevisionCount);
             return local;
         }
     }

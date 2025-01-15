@@ -18,7 +18,7 @@ public class NetworkServiceTest {
     private NetworkService networkServiceSpy;
     private Workbook localWorkbook;
     private SyncManager mockSyncManager;
-    private Gson gson = new Gson();
+    private final Gson gson = new Gson();
 
     @BeforeEach
     void setup() throws Exception {

@@ -2,12 +2,13 @@ package org.example.formulaeditor.parser.ast;
 
 import org.example.formulaeditor.parser.ASTNodeVisitor;
 
-public class Binary implements ASTNode {
+public class Binary extends AbstractASTNode {
     public final ASTNode left;
     public final ASTNode right;
     public final BinaryOp op;
 
     public Binary(ASTNode left, BinaryOp op, ASTNode right) {
+        super(6);
         this.left = left;
         this.right = right;
         this.op = op;
