@@ -15,7 +15,6 @@ public class CRDTRules {
 
 
     public Formula applyRules(Formula local, Formula remote) {
-        //TODO merge logic
 
         // Merge version vectors
         VersionVector mergedVersionVector = new VersionVector(local.getVersionVector().getVersions());

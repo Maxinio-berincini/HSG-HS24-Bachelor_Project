@@ -366,7 +366,6 @@ public class WorkbookUI extends BorderPane {
     private void handleSyncButton() {
         System.out.println("Sync button clicked");
         networkService.pullFromAllAndBroadcast();
-        // TODO implement synchronization
     }
 
 

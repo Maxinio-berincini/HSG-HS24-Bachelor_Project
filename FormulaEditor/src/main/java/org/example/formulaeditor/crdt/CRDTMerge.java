@@ -10,7 +10,6 @@ public class CRDTMerge {
         this.rules = rules;
     }
 
-    //TODO merge logic
     public Workbook merge(Workbook local, Workbook remote) {
         return rules.applyRules(local, remote);
     }
