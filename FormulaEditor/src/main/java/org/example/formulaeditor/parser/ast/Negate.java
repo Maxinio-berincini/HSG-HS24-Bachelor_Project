@@ -6,6 +6,7 @@ public class Negate extends AbstractASTNode {
     public final ASTNode node;
 
     public Negate(ASTNode node) {
+        super(0);
         this.node = node;
     }
 

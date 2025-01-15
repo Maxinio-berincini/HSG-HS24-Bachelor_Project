@@ -10,6 +10,7 @@ public class FunctionCall extends AbstractASTNode {
     public final List<ASTNode> args;
 
     public FunctionCall(BasicFunction name, List<ASTNode> args) {
+        super(7);
         this.functionName = name;
         this.args = args;
     }

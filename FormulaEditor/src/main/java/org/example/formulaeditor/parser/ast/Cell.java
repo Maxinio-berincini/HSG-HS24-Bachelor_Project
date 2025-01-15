@@ -7,6 +7,7 @@ public class Cell extends AbstractASTNode {
     public final int row;
 
     public Cell(String column, int row) {
+        super(4);
         this.column = column;
         this.row = row;
     }

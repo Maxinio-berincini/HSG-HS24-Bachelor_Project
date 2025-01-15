@@ -6,6 +6,7 @@ public class ExcelString extends AbstractASTNode {
     public final String value;
 
     public ExcelString(String value) {
+        super(1);
         this.value = value;
     }
 

@@ -7,6 +7,7 @@ public class CellRange extends AbstractASTNode {
     public final Cell end;
 
     public CellRange(Cell start, Cell end) {
+        super(5);
         this.start = start;
         this.end = end;
     }

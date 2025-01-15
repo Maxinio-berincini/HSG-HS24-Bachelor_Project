@@ -6,6 +6,7 @@ public class Number<N extends java.lang.Number> extends AbstractASTNode {
     public final N value;
 
     public Number(N value) {
+        super(3);
         this.value = value;
     }
 

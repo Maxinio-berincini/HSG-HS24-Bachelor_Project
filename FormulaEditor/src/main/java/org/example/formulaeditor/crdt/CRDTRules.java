@@ -312,19 +312,6 @@ public class CRDTRules {
         return new Negate(mergedInnerNode);
     }
 
-    //todo extract to abstract ast node
-    private int getTypePriority(ASTNode node) {
-        if (node instanceof FunctionCall) return 7;
-        if (node instanceof Binary) return 6;
-        if (node instanceof CellRange) return 5;
-        if (node instanceof Cell) return 4;
-        if (node instanceof Number<?>) return 3;
-        if (node instanceof Boolean) return 2;
-        if (node instanceof ExcelString) return 1;
-        return 0; // Default priority for unknown types
-    }
-
-
     // Resolve type conflicts between different node types
     private ASTNode resolveTypeConflict(ASTNode local, ASTNode remote) {
         // Resolve conflicts for negate
@@ -379,8 +366,8 @@ public class CRDTRules {
     }
 
     private ASTNode choosePreferredNode(ASTNode local, ASTNode remote) {
-        int localPriority = getTypePriority(local);
-        int remotePriority = getTypePriority(remote);
+        int localPriority = ((AbstractASTNode) local).getPriority();
+        int remotePriority = ((AbstractASTNode) remote).getPriority();
 
         if (localPriority > remotePriority) {
             return local;

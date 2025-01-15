@@ -6,6 +6,7 @@ public class Boolean extends AbstractASTNode {
     public final boolean value;
 
     public Boolean(boolean value) {
+        super(2);
         this.value = value;
     }
 

@@ -8,6 +8,7 @@ public class Binary extends AbstractASTNode {
     public final BinaryOp op;
 
     public Binary(ASTNode left, BinaryOp op, ASTNode right) {
+        super(6);
         this.left = left;
         this.right = right;
         this.op = op;
