@@ -52,6 +52,14 @@ public class FormulaMergeTest {
     }
 
     @Test
+    public void spacesWithDifferentLengthStrings() {
+        Formula formula1 = createFormula(" peaches");
+        Formula formula2 = createFormula(" apple    ");
+        mergeResult = crdtMerge.merge(formula1, formula2);
+        Assertions.assertEquals("peaches", mergeResult.toString());
+    }
+
+    @Test
     public void singleSum() {
         Formula formula1 = createFormula("SUM(5,2)");
         Formula formula2 = createFormula("SUM(1,8)");
