@@ -13,16 +13,16 @@ public class InstanceIdManager {
     public static String getInstanceId() {
         File file = new File(filePath);
         if (file.exists()) {
-            // try reading ID from file
+            // Try reading ID from file
             try {
                 return Files.readString(Paths.get(filePath)).trim();
             } catch (IOException e) {
                 e.printStackTrace();
-                // create new on error
+                // Create new on error
                 return createInstanceId();
             }
         } else {
-            // create new on first run
+            // Create new on first run
             return createInstanceId();
         }
     }
@@ -31,7 +31,7 @@ public class InstanceIdManager {
         // Generate a random UUID
         String newId = UUID.randomUUID().toString();
 
-        // write id to file
+        // Write id to file
         try (FileWriter writer = new FileWriter(filePath)) {
             writer.write(newId);
         } catch (IOException e) {

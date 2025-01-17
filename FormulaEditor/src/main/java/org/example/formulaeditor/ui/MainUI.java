@@ -19,7 +19,7 @@ public class MainUI extends Application {
         final String filePath = "src/main/resources/workbook.json";
         final String filePath2 = "src/main/resources/workbook2.json";
 
-        //try to load workbook
+        // Try to load workbook
         Workbook workbook;
         try {
             workbook = WorkbookFileIO.load(filePath);
@@ -39,6 +39,7 @@ public class MainUI extends Application {
         primaryStage.show();
 
         // Second empty instance for testing
+        // If testing network feature from different devices, only run instance 1 because of the unique id. (After running mvn:javafx run, both users should simply close their Instance 2 window)
         Stage secondStage = new Stage();
         FormulaEditor formulaEditor2 = new FormulaEditor(instanceId2);
         formulaEditor2.setFilePath(filePath2);
