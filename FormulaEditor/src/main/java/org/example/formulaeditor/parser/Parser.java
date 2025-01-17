@@ -105,7 +105,7 @@ public class Parser {
         if (cursor >= tokens.length) return Optional.empty();
         String name = tokens[cursor];
         if (!name.matches("^[a-zA-Z0-9_][a-zA-Z0-9_.]+$")) return Optional.empty();
-        // if (!name.matches("^[a-zA-Z_][a-zA-Z0-9_.]+$")) return Optional.empty(); // ORIGINAL VERSION FROM GEORGE
+        // if (!name.matches("^[a-zA-Z_][a-zA-Z0-9_.]+$")) return Optional.empty(); // Original regex provided by the George
         cursor++;
         for (BasicFunction fun : BasicFunction.values()) {
             if (fun.toString().equalsIgnoreCase(name)) {

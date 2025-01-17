@@ -1,31 +1,92 @@
-# Bachelor Project - Local First Software: Helix
+# Helix
+## Local-First Collaborative Formula Editor
 
-By: Teo Field-Marsham and Max Beringer
+<p align="center"> 
+  <img src="FormulaEditor/src/main/resources/logo.png" alt="Project Logo"  height="200"/> 
+</p>
 
-This repository contains the code for Helix, a local-first collaborative formula editor. 
+![CI](https://github.com/Maxinio-berincini/HSG-HS24-Bachelor_Project/actions/workflows/test.yml/badge.svg)
 
-## Overleaf Documentation
+Helix Formula Editor is a **local-first** collaborative Excel-style formula editor. 
+It uses CRDT-based merging rules, allowing users to simultaneously edit, merge, and synchronize workbooks.
 
-[Project Report](https://www.overleaf.com/2968874965fdprxthnpqbr#ff6834)
+---
 
-## Collaborative Excel
+## Table of Contents
+- [Repository Structure](#repository-structure)
+- [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+    - [Running the Application](#running-the-application)
+    - [Testing](#testing)
+---
 
-[Excel Test Workbook](https://universitaetstgallen-my.sharepoint.com/:x:/g/personal/max_beringer_student_unisg_ch/EWATbIVhY_hEq_wKv-lx8YcB2wLVMEke4HgILwN57KLkpQ)
 
-## Collaborative PowerPoint
+## Repository Structure
 
-[Interim Presentation](https://universitaetstgallen-my.sharepoint.com/:p:/r/personal/max_beringer_student_unisg_ch/Documents/Bachelor%20Project%20Intermediate%20Presentation.pptx?d=w98b06545af7f49df8a84e3db3f0b2479&csf=1&web=1&e=gQvzW2)
+The GitHub repository is organized into three main directories:
 
-[Final Presentation](https://universitaetstgallen-my.sharepoint.com/:p:/g/personal/max_beringer_student_unisg_ch/EadM1u0wA_tBsbWMr-V6wo0B91tJZ1FfATZ6ulsmRYd9Fg?email=teo.field-marsham%40student.unisg.ch&e=aBtwLJ)
+- **`FormulaEditor/`**  
+  Contains the source code for the local-first collaborative formula editor.
+    - **CRDT Logic** (`crdt/`)
+    - **Data Models** (`model/`)
+    - **Network Layer** (`network/`)
+    - **Formula Parser** (`parser/`)
+      - **AST** (`parser/ast/`)
+    - **JavaFX UI** (`ui/`)
+    - **Tests** in the `test` directory
 
-## Running Helix
+- **`docker/`**  
+  Docker files for the WebSocket signaling server. This server helps peers discover each other and synchronize changes over the network.
 
-- **Java Version:** Ensure you have Java 19 or higher installed. For Mac users, update both openjfx versions in the pom.xml to version 21 or higher.
-- **Dependencies:** Emsure that JavaFX and Maven are installed on your device. For Mac users, update both openjfx versions in the pom.xml to version 21 or higher.
-- **Installation:** Simply clone the [repository](https://github.com/Maxinio-berincini/HSG-HS24-Bachelor_Project) and you are good to go! 
+- **`docs/`**  
+  Contains PDF files of the final and interim presentations as well as handwritten test scenarios. These scenarios were later converted into the unit tests you see in the `test` folder.
 
-To run Helix from an IDE, enter the following command into console:
+---
 
-    mvn javafx:run
-    
-Enter your desired formulas and press Sync.
+## Getting Started
+
+### Prerequisites
+
+- **Java 19** or higher
+- **Maven 3.8+** 
+
+**Note for macOS Users**  
+For certain macOS environments, **Java 21 and JavaFX 21 or higher** may be required to properly run Helix. 
+### Installation
+
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/Maxinio-berincini/HSG-HS24-Bachelor_Project.git
+   cd HSG-HS24-Bachelor_Project/FormulaEditor
+   ```
+2. **Build the Project**
+   ```bash
+   mvn clean install
+   ```
+   This command will download dependencies, compile the source code, and run tests.
+
+### Running the Application
+
+1. **Via Maven**  
+   With the [JavaFX Maven plugin](https://github.com/openjfx/javafx-maven-plugin) configured in the `pom.xml`:
+   ```bash
+   mvn javafx:run
+   ```
+   or:
+   ```bash
+   mvn clean compile exec:java -Dexec.mainClass="org.example.formulaeditor.ui.MainUI"
+   ```
+2. **Multiple Instances**  
+     - By default, `MainUI` runs a single instance. This can be changed to run multiple instances for simulating collaboration. 
+
+3. **Network Configuration**
+    - By default, `NetworkService` connects to a WebSocket server hosted at `wss://helix.berinet.ch`.
+    - This can be changed at runtime within the UI.
+
+### Testing
+
+Run the unit tests with:
+```bash
+mvn test
+```

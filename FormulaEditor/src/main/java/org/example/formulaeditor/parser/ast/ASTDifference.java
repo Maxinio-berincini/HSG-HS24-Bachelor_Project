@@ -4,26 +4,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-// compare old and new AST
-// if nodes differ, take content from new node but revision count from old node
+// Compare old and new AST
+// If nodes differ, take content from new node but revision count from old node
 public class ASTDifference {
     public ASTNode mergeUpdatedAST(ASTNode oldNode, ASTNode newNode) {
         if (oldNode == null) {
-            //new formula ast
+            // New formula ast
             return newNode;
         }
 
-        //no changes
+        // No changes
         if (oldNode == newNode) {
             return oldNode;
         }
 
-        //check AST structure
+        // Check AST structure
         if (structurallyEquals(oldNode, newNode)) {
             return oldNode;
         }
 
-        //check one by one
+        // Check one by one
         if (oldNode instanceof Binary && newNode instanceof Binary) {
             return mergeBinary((Binary) oldNode, (Binary) newNode);
         } else if (oldNode instanceof Number && newNode instanceof Number) {
@@ -43,16 +43,16 @@ public class ASTDifference {
         }
 
 
-        //completely edited
+        // Completely edited
         return createReplacement(oldNode, newNode);
     }
 
     private ASTNode mergeBinary(Binary oldBin, Binary newBin) {
-        //merge left and right branch
+        // Merge left and right branch
         ASTNode mergedLeft = mergeUpdatedAST(oldBin.left, newBin.left);
         ASTNode mergedRight = mergeUpdatedAST(oldBin.right, newBin.right);
 
-        //update revision count if there are differences
+        // Update revision count if there are differences
         if (!Objects.equals(oldBin.op, newBin.op)
                 || mergedLeft != oldBin.left
                 || mergedRight != oldBin.right) {
@@ -67,13 +67,13 @@ public class ASTDifference {
     }
 
     private ASTNode mergeFunctionCall(FunctionCall oldFunC, FunctionCall newFunC) {
-        //check for change in function name
+        // Check for change in function name
         boolean nameChanged = (oldFunC.functionName != newFunC.functionName);
 
         List<ASTNode> oldArgs = oldFunC.args;
         List<ASTNode> newArgs = newFunC.args;
 
-        //changes flag
+        // Changes flag
         boolean anyArgChanged = (oldArgs.size() != newArgs.size()) || nameChanged;
 
         int minSize = Math.min(oldArgs.size(), newArgs.size());
@@ -95,7 +95,7 @@ public class ASTDifference {
         }
 
         if (anyArgChanged) {
-            //create a new FunctionCall with old revision count +1
+            // Create a new FunctionCall with old revision count +1
             FunctionCall updated = new FunctionCall(newFunC.functionName, mergedArgs);
             updated.setRevisionCount(oldFunC.getRevisionCount() + 1);
             return updated;
@@ -117,7 +117,7 @@ public class ASTDifference {
     }
 
     private ASTNode mergeCell(Cell oldCell, Cell newCell) {
-        //column or row changed
+        // Column or row changed
         boolean changed = !oldCell.column.equals(newCell.column) || (oldCell.row != newCell.row);
 
         if (changed) {
@@ -130,7 +130,7 @@ public class ASTDifference {
     }
 
     private ASTNode mergeCellRange(CellRange oldRange, CellRange newRange) {
-        //merge both cell references
+        // Merge both cell references
         ASTNode mergedStart = mergeUpdatedAST(oldRange.start, newRange.start);
         ASTNode mergedEnd = mergeUpdatedAST(oldRange.end, newRange.end);
 
@@ -173,8 +173,7 @@ public class ASTDifference {
         }
     }
 
-
-    //create new node on complete change
+    // Create new node on complete change
     private ASTNode createReplacement(ASTNode oldNode, ASTNode newNode) {
         AbstractASTNode oldAbs = (AbstractASTNode) oldNode;
         AbstractASTNode newAbs = (AbstractASTNode) newNode;
@@ -185,7 +184,7 @@ public class ASTDifference {
         return newAbs;
     }
 
-    //check AST structure for relevant changes
+    // Check AST structure for relevant changes
     public boolean structurallyEquals(ASTNode oldNode, ASTNode newNode) {
         if (oldNode == newNode) {
             return true;
@@ -197,7 +196,7 @@ public class ASTDifference {
             return false;
         }
 
-        // types
+        // Types
         if (oldNode instanceof Binary oBin && newNode instanceof Binary nBin) {
             return oBin.op == nBin.op
                     && structurallyEquals(oBin.left, nBin.left)
@@ -208,7 +207,7 @@ public class ASTDifference {
                     || oFun.args.size() != nFun.args.size()) {
                 return false;
             }
-            // compare each arg
+            // Compare each arg
             for (int i = 0; i < oFun.args.size(); i++) {
                 if (!structurallyEquals(oFun.args.get(i), nFun.args.get(i))) {
                     return false;
@@ -237,7 +236,7 @@ public class ASTDifference {
             return oBool.value == nBool.value;
         }
 
-        //return false if none of the above hit
+        // Return false if none of the above hit
         return false;
     }
 }

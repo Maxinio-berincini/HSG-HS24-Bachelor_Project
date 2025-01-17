@@ -10,12 +10,11 @@ public class ASTSerializer {
     private ASTSerializer() {
     }
 
-    //convert ASTNode with children to json
+    // Convert ASTNode with children to json
     public static String astToJsonString(ASTNode node) {
         JsonObject jsonObj = astToJson(node);
         return jsonObj.toString();
     }
-
 
     public static JsonObject astToJson(ASTNode node) {
         if (node == null) {
@@ -24,11 +23,11 @@ public class ASTSerializer {
 
         AbstractASTNode absNode = (AbstractASTNode) node;
 
-        //create json object
+        // Create json object
         JsonObject obj = new JsonObject();
         obj.addProperty("revisionCount", absNode.getRevisionCount());
 
-        //check node type
+        // Check node type
         if (node instanceof Binary bin) {
             obj.addProperty("type", "Binary");
 
@@ -74,13 +73,12 @@ public class ASTSerializer {
             obj.add("args", argsArr);
 
         } else {
-            //in case of malformed node type
+            // In case of malformed node type
             obj.addProperty("type", "Unknown");
         }
 
         return obj;
     }
-
 
     public static ASTNode astFromJsonString(String jsonString) {
         if (jsonString == null || jsonString.isBlank()) {
@@ -98,13 +96,13 @@ public class ASTSerializer {
             return null;
         }
 
-        //get revision count
+        // Get revision count
         int revisionCount = 1;
         if (obj.has("revisionCount")) {
             revisionCount = obj.get("revisionCount").getAsInt();
         }
 
-        //get node type
+        // Get node type
         String type = obj.has("type") ? obj.get("type").getAsString() : "Unknown";
 
         switch (type) {
@@ -179,14 +177,14 @@ public class ASTSerializer {
     }
 
     private static Number<?> parseNumber(String valueStr) {
-        //try int
+        // Try int
         try {
             long l = Long.parseLong(valueStr);
             return new org.example.formulaeditor.parser.ast.Number<>(l);
         } catch (NumberFormatException ignored) {
         }
 
-        //try double
+        // Try double
         try {
             double d = Double.parseDouble(valueStr);
             return new org.example.formulaeditor.parser.ast.Number<>(d);

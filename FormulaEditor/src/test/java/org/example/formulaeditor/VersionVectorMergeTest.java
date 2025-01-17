@@ -305,10 +305,10 @@ public class VersionVectorMergeTest {
     public void testIncrementMultipleInstanceIds2() {
         VersionVector versionVector = new VersionVector();
         versionVector.increment("InstanceA");
-        versionVector.increment("InstanceB");
+        versionVector.increment("InstanceB"); // Vector has already been edited, therefore this should not increment
         System.out.println(versionVector);
         Assertions.assertEquals(1, versionVector.getVersion("InstanceA"));
-        Assertions.assertEquals(0, versionVector.getVersion("InstanceB")); // TODO why is this not also 1?
+        Assertions.assertEquals(0, versionVector.getVersion("InstanceB"));
     }
 
     @Test
@@ -318,10 +318,10 @@ public class VersionVectorMergeTest {
         versions1.put("InstanceB", 0);
         VersionVector versionVector = new VersionVector(versions1);
         versionVector.increment("InstanceA");
-        versionVector.increment("InstanceB");
+        versionVector.increment("InstanceB"); // Vector has already been edited, therefore this should not increment
 
         Assertions.assertEquals(1, versionVector.getVersion("InstanceA"));
-        Assertions.assertEquals(0, versionVector.getVersion("InstanceB")); // TODO why is this not also 1?
+        Assertions.assertEquals(0, versionVector.getVersion("InstanceB"));
     }
 
 }

@@ -7,7 +7,7 @@ import java.util.List;
 
 public class ASTPrinter {
 
-    //print formula node by node with revision count
+    // Print formula node by node with revision count
     public static void printFormulaDetails(Formula formula) {
         if (formula == null) {
             System.out.println("No formula provided.");
@@ -15,12 +15,12 @@ public class ASTPrinter {
         }
         System.out.println("Formula (" + formula.getId() + "): " + formula);
 
-        //get list of all nodes
+        // Get list of all nodes
         ASTNode root = formula.getAst();
         List<ASTNode> allNodes = new ArrayList<>();
         collectAllNodes(root, allNodes);
 
-        //print each node
+        // Print each node
         System.out.println("Node details (class name 'content' -> revisionCount):");
         for (ASTNode node : allNodes) {
             int revCount = ((AbstractASTNode) node).getRevisionCount();
@@ -29,7 +29,7 @@ public class ASTPrinter {
         }
     }
 
-    //get a list of all nodes
+    // Get a list of all nodes
     private static void collectAllNodes(ASTNode node, List<ASTNode> result) {
         if (node == null) {
             return;
@@ -50,5 +50,4 @@ public class ASTPrinter {
             collectAllNodes(range.end, result);
         }
     }
-
 }

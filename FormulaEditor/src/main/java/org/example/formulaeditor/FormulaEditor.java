@@ -47,7 +47,7 @@ public class FormulaEditor {
             workbook.addFormula(formula);
             return formula.toString();
         } else {
-            //merge node by node on update
+            // Merge node by node on update
             ASTNode oldAST = existingFormula.getAst();
             versionVector = existingFormula.getVersionVector();
 
@@ -59,7 +59,6 @@ public class FormulaEditor {
             Formula mergedFormula = new Formula(id, mergedAST, versionVector);
 
             workbook.addFormula(mergedFormula);
-
 
             ASTPrinter.printFormulaDetails(mergedFormula);
 
@@ -75,5 +74,5 @@ public class FormulaEditor {
         return workbook;
     }
 
-    //TODO add more UI methods
+    //TODO add more UI methods (for possible future Helix expansion)
 }

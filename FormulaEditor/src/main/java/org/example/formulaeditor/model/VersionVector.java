@@ -58,12 +58,12 @@ public class VersionVector {
     }
 
     public void merge(VersionVector other) {
-        // create vector with all components
+        // Create vector with all components
         Set<String> allInstances = new HashSet<>();
         allInstances.addAll(this.getInstances());
         allInstances.addAll(other.getInstances());
 
-        // choose maximum value of each component
+        // Choose maximum value of each component
         for (String instanceId : allInstances) {
             int thisVersion = this.getVersion(instanceId);
             int otherVersion = other.getVersion(instanceId);
