@@ -343,7 +343,7 @@ public class WorkbookUI extends BorderPane {
         Formula formula = workbook.getFormula(cellId);
         if (formula != null) {
             // Return the formula
-            // TODO: Display the evaluated result instead of the formula string
+            // TODO: Display the evaluated result instead of the formula string (for possible future Helix expansion)
             return formula.toString();
         } else {
             return "";
@@ -368,7 +368,6 @@ public class WorkbookUI extends BorderPane {
         networkService.pullFromAllAndBroadcast();
     }
 
-
     private void showErrorDialog(String title, String message) {
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -378,5 +377,4 @@ public class WorkbookUI extends BorderPane {
             alert.showAndWait();
         });
     }
-
 }

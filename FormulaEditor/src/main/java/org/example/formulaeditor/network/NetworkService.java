@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-
 public class NetworkService extends WebSocketClient {
     private static final Gson GSON = new Gson();
 
@@ -41,7 +40,7 @@ public class NetworkService extends WebSocketClient {
     public void onOpen(ServerHandshake handshakedata) {
         System.out.println("[NetworkService] WebSocket connected. Registering peer: " + peerId);
 
-        // register on signaling server
+        // Register on signaling server
         String registerMsg = GSON.toJson(Map.of(
                 "type", "REGISTER",
                 "peerId", peerId
@@ -73,15 +72,15 @@ public class NetworkService extends WebSocketClient {
                     }
                 }
                 case "REQUEST_WORKBOOK" -> {
-                    //send local workbook on pull request
+                    // Send local workbook on pull request
                     String fromPeer = (String) msg.get("fromPeer");
                     System.out.println("[NetworkService] Received REQUEST_WORKBOOK from " + fromPeer);
 
-                    //signal local workbook
+                    // Signal local workbook
                     sendWorkbookToPeer(localWorkbook, fromPeer);
                 }
                 case "SIGNAL" -> {
-                    // receiving workbook as json
+                    // Receiving workbook as json
                     Map<?, ?> data = (Map<?, ?>) msg.get("data");
                     if (data.containsKey("workbook")) {
                         String workbookJson = (String) data.get("workbook");
@@ -96,18 +95,18 @@ public class NetworkService extends WebSocketClient {
                         syncManager.merge(localWorkbook, remoteWorkbook);
                         System.out.println("[NetworkService] Merge complete.");
 
-                        //on multiple pulls
+                        // On multiple pulls
                         if (pendingRequests > 0) {
                             pendingRequests--;
                             System.out.println("[NetworkService] pendingRequests: " + pendingRequests);
 
-                            //broadcast on final pull
+                            // Broadcast on final pull
                             if (pendingRequests == 0 && pullInProgress) {
                                 broadcastLocalWorkbook();
                                 pullInProgress = false;
                             }
                         }
-                        //if not pull in progress, maybe a broadcast --> avoid broadcasting loop
+                        // If not pull in progress, maybe a broadcast --> avoid broadcasting loop
                     }
                 }
                 default -> System.out.println("[NetworkService] Unknown message type: " + type);
@@ -128,12 +127,10 @@ public class NetworkService extends WebSocketClient {
         ex.printStackTrace();
     }
 
-
     public void discoverPeers() {
         String discoverMsg = GSON.toJson(Map.of("type", "DISCOVER", "peerId", peerId));
         send(discoverMsg);
     }
-
 
     public void requestWorkbookFrom(String targetPeerId) {
         Map<String, Object> reqMsg = Map.of(
@@ -149,7 +146,7 @@ public class NetworkService extends WebSocketClient {
         pullInProgress = true;
         discoverPeers();
 
-        //wait for updated peer list before pulling
+        // Wait for updated peer list before pulling
         new Thread(() -> {
             try {
                 Thread.sleep(1000);
@@ -182,7 +179,7 @@ public class NetworkService extends WebSocketClient {
     }
 
     public void sendWorkbookToPeer(Workbook workbook, String targetPeerId) {
-        //convert to DTO
+        // Convert to DTO
         WorkbookSyncDTO dto = NetworkSerializer.toSyncDTO(workbook);
         String wbJson = GSON.toJson(dto);
 
@@ -197,7 +194,6 @@ public class NetworkService extends WebSocketClient {
 
         System.out.println("[NetworkService] Sent workbook to peer: " + targetPeerId);
     }
-
 
     public void waitForConnection() throws InterruptedException {
         int retries = 0;

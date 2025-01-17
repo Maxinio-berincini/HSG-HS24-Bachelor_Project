@@ -41,7 +41,7 @@ public class CRDTRules {
         for (String id : local.getFormulasMap().keySet()) {
             Formula localFormula = local.getFormula(id);
             if (remote.containsFormula(id)) {
-                // Formula exists in both, merge them
+                // If formula exists in both, merge them
                 Formula remoteFormula = remote.getFormula(id);
                 Formula mergedFormula = applyRules(localFormula, remoteFormula);
                 mergedWorkbook.addFormula(mergedFormula);
@@ -333,7 +333,7 @@ public class CRDTRules {
         if (local instanceof FunctionCall && remote instanceof Binary remoteBinary) {
             return remoteBinary.left.getClass().equals(local.getClass());
         }
-        // TODO define other compatibility conditions
+        // TODO define other compatibility conditions (for possible future Helix expansion)
         return false;
     }
 
@@ -351,7 +351,7 @@ public class CRDTRules {
             // If we cannot merge, decide which node to prefer
             return choosePreferredNode(local, remote);
         }
-        // TODO define other merge strategies
+        // TODO define other merge strategies (for possible future Helix expansion)
     }
 
     private ASTNode choosePreferredNode(ASTNode local, ASTNode remote) {

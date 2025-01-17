@@ -7,10 +7,8 @@ import org.example.formulaeditor.model.Workbook;
 public class SyncManager {
     private static SyncManager instance = null;
 
-
     private SyncManager() {
     }
-
 
     public static synchronized SyncManager getInstance() {
         if (instance == null) {
@@ -18,7 +16,6 @@ public class SyncManager {
         }
         return instance;
     }
-
 
     public synchronized void merge(Workbook localWorkbook, Workbook remoteWorkbook) {
         CRDTRules rules = new CRDTRules();

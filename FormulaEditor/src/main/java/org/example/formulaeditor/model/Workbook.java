@@ -32,16 +32,16 @@ public class Workbook {
         return formulas;
     }
 
-    //check if formula exists in workbook
+    // Check if formula exists in workbook
     public boolean containsFormula(String id) {
         return formulas.containsKey(id);
     }
 
-    //update workbook with merged formulas
+    // Update workbook with merged formulas
     public void updateFrom(Workbook other) {
         this.formulas.clear();
         this.formulas.putAll(other.getFormulasMap());
     }
 
-    //TODO Cell handling
+    // TODO Cell handling
 }

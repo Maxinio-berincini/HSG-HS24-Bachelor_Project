@@ -2,7 +2,7 @@
 
 /* Remove alternating row colors */
 .table-view .table-row-cell {
-    -fx-background-color: rgb(255, 255, 255); /* Set all row backgrounds to white */
+    -fx-background-color: rgb(255, 255, 255);
 }
 
 /* Keep default selection and hover colors */
@@ -12,7 +12,7 @@
 
 /* Make vertical gridlines black */
 .table-view {
-    -fx-border-color: rgb(192, 192, 192); /* Change this to red to see what this does */
+    -fx-border-color: rgb(192, 192, 192);
     -fx-table-cell-border-color: rgb(192, 192, 192);
 }
 
@@ -29,10 +29,10 @@
 
 .sync-button {
     -fx-padding: 5px 10px;
-    -fx-background-color: #4CAF50; /* Green background */
-    -fx-text-fill: white; /* White text */
-    -fx-font-weight: bold; /* Bold text */
-    -fx-border-radius: 5px; /* Rounded corners */
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-radius: 5px;
     -fx-background-radius: 5px;
 }
 
