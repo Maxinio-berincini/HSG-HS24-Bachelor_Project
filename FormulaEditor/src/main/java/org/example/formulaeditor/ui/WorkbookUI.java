@@ -17,9 +17,12 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.converter.DefaultStringConverter;
 import org.example.formulaeditor.FormulaEditor;
+import org.example.formulaeditor.io.WorkbookFileIO;
 import org.example.formulaeditor.model.Formula;
 import org.example.formulaeditor.model.Workbook;
 import org.example.formulaeditor.network.NetworkService;
+
+import java.io.IOException;
 
 public class WorkbookUI extends BorderPane {
     private final FormulaEditor formulaEditor;
@@ -46,6 +49,14 @@ public class WorkbookUI extends BorderPane {
         stage.setOnCloseRequest(e -> {
             System.out.println("[WorkbookUI] Window closing. Disconnecting...");
             networkService.close();
+
+            try {
+                System.out.println("[WorkbookUI] Saving Workbook...");
+                WorkbookFileIO.save(formulaEditor.getWorkbook(), formulaEditor.getFilePath());
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
         });
 
 
