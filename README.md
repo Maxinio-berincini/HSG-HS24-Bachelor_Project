@@ -29,6 +29,7 @@ The GitHub repository is organized into three main directories:
 - **`FormulaEditor/`**  
   Contains the source code for the local-first collaborative formula editor.
     - **CRDT Logic** (`crdt/`)
+    - **Persistence** (`io/`)
     - **Data Models** (`model/`)
     - **Network Layer** (`network/`)
     - **Formula Parser** (`parser/`)

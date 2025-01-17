@@ -7,6 +7,8 @@ import org.example.formulaeditor.model.Workbook;
 
 import java.util.Scanner;
 
+// THIS CLASS IS FOR TESTING PURPOSES ONLY
+
 public class Main {
     public static void main(String[] args) throws Exception {
         Scanner scanner = new Scanner(System.in);

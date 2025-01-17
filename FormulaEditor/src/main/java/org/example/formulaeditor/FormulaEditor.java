@@ -12,8 +12,9 @@ import java.util.HashMap;
 
 public class FormulaEditor {
     private final Parser parser;
-    private final Workbook workbook;
+    private Workbook workbook;
     private final String instanceId;
+    private String filePath = "src/main/resources/fallbackWorkbook.json";
 
     public FormulaEditor(String instanceId) {
         this.parser = new Parser();
@@ -72,6 +73,18 @@ public class FormulaEditor {
 
     public Workbook getWorkbook() {
         return workbook;
+    }
+
+    public void setWorkbook(Workbook workbook) {
+        this.workbook = workbook;
+    }
+
+    public String getFilePath() {
+        return this.filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 
     //TODO add more UI methods (for possible future Helix expansion)
