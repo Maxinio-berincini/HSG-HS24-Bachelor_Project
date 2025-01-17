@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.example.formulaeditor.FormulaEditor;
+import org.example.formulaeditor.io.InstanceIdManager;
 import org.example.formulaeditor.io.WorkbookFileIO;
 import org.example.formulaeditor.model.Workbook;
 
@@ -12,7 +13,7 @@ import java.io.IOException;
 public class MainUI extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
-        final String instanceId = "Instance1";
+        final String instanceId = InstanceIdManager.getInstanceId();
         final String instanceId2 = "Instance2";
         final String serverUrl = "wss://helix.berinet.ch";
         final String filePath = "src/main/resources/workbook.json";
